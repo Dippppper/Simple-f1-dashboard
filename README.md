@@ -32,7 +32,7 @@ Windows 下也可以直接双击：
 - `update.bat` — 更新数据
 - `start-server.bat` — 启动服务并自动打开浏览器
 
-> 拉取其他年份：`python fetch_f1_data.py 2025`
+> 拉其他年份的数据：`python fetch_f1_data.py 2025`
 
 ## 项目结构
 
@@ -51,10 +51,10 @@ Windows 下也可以直接双击：
 
 ## 说明
 
-- `fonts/` 未包含在仓库中（Google Sans / Formula 1 Black 为商业授权字体）。缺失时页面自动回退到系统字体，不影响使用；如有授权可自行放入 `fonts/` 还原视觉效果。
-- `.fastf1_cache/` 为 FastF1 本地缓存，首次运行自动生成，无需提交。
-- AI 预测的 API Key 仅在浏览器端输入、经本地服务转发，不会被保存。
+- `fonts/` 未包含在仓库中（Google Sans / Formula 1 Black 为商业授权字体）。缺失时回到系统字体；如有授权可自行放入 `fonts/` 。
+- `.fastf1_cache/` 为 FastF1 本地缓存，首次运行自动生成。
+- AI 预测的 API Key 仅在浏览器端输入,不会被保存。
 
-## 免责声明
+## 免责
 
 本项目为个人学习项目，与 Formula 1、FIA 及各车队无任何隶属或授权关系。数据来自 FastF1 提供的公开计时数据。
