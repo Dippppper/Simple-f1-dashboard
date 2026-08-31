@@ -1,0 +1,31 @@
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ── FastF1 缓存（体积巨大，首次运行自动重建）──
+.fastf1_cache/
+
+# ── 本机工具目录 ──
+.workbuddy/
+
+# ── 字体文件（Google Sans / Formula 1 Black 为商业授权字体，不分发）──
+# 如需还原视觉效果，请自行将 ttf 放入 fonts/ 目录
+fonts/
+
+# ── 开发期校验脚本与日志 ──
+check.js
+verify.js
+verify-final.js
+gen_pole_speed_log*.txt
+*.log
+
+# ── 其他本机残留 ──
+hero-fashion-preview.html
+
+# ── 系统文件 ──
+.DS_Store
+Thumbs.db
+desktop.ini

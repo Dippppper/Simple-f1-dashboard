@@ -1,0 +1,4 @@
+fastf1>=3.0
+pandas
+numpy
+matplotlib

@@ -1,0 +1,3030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 2026赛季 · Hungarian GP Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Google Sans - local fonts */
+        @font-face {
+            font-family: 'Google Sans';
+            src: url('fonts/GoogleSans-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Google Sans';
+            src: url('fonts/GoogleSans-Medium.ttf') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Google Sans';
+            src: url('fonts/GoogleSans-SemiBold.ttf') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Google Sans';
+            src: url('fonts/GoogleSans-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Google Sans';
+            src: url('fonts/GoogleSans-Italic.ttf') format('truetype');
+            font-weight: 400;
+            font-style: italic;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Google Sans';
+            src: url('fonts/GoogleSans-BoldItalic.ttf') format('truetype');
+            font-weight: 700;
+            font-style: italic;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'F1 Black';
+            src: url('fonts/Formula 1 Black.ttf') format('truetype');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161e;
+            --accent-red: #e10600;
+            --accent-red-glow: rgba(225, 6, 0, 0.3);
+            --accent-yellow: #f5d442;
+            --accent-green: #00d26a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #6a6a6a;
+            --text-dim: #4a4a4a;
+            --border: rgba(255,255,255,0.06);
+            --gradient-dark: linear-gradient(135deg, #0a0a0f 0%, #1a1a28 100%);
+            /* Grayscale palette for content sections */
+            --gray-1: #ffffff;
+            --gray-2: #d0d0d0;
+            --gray-3: #a0a0a0;
+            --gray-4: #8a8a8a;
+            --gray-5: #6e6e6e;
+            --gray-6: #303030;
+            --gray-7: #1e1e1e;
+            --gray-bar: #2a2a2a;
+            /* Font stacks */
+            --font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'Orbitron', 'Google Sans', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .font-racing { font-family: var(--font-mono); }
+
+        /* Hero Section - redesigned with card */
+        .hero {
+            position: relative;
+            padding: 40px 20px 40px;
+            background: var(--gradient-dark);
+            overflow: hidden;
+        }
+
+        .hero-inner {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+            perspective: 900px;
+        }
+
+        /* LEFT identity column (outside the red card) */
+        .hero-left {
+            flex: 0 0 420px;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 22px;
+            padding: 6px 0;
+        }
+
+        .hero-title {
+            font-family: 'F1 Black', var(--font-sans);
+            font-size: clamp(26px, 4vw, 44px);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: 1px;
+            color: #fff;
+            white-space: normal;
+            overflow-wrap: break-word;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .f1-logo-svg {
+            height: 36px;
+            width: auto;
+            border: none;
+            pointer-events: none;
+        }
+
+        .hero-subtitle {
+            font-size: 15px;
+            color: rgba(255,255,255,0.92);
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        .session-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(245,212,66,0.30);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .session-dot {
+            width: 10px; height: 10px;
+            background: var(--accent-yellow);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--accent-yellow);
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .session-text {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        /* ===== Editorial Hero Stage ===== */
+        .hero-stage {
+            position: relative;
+            flex: 0 1 320px;
+            max-width: 320px;
+            min-width: 0;
+            min-height: 280px;
+            border-radius: 28px;
+            background: radial-gradient(circle at 100% 100%, #e23a44 0%, #c01e2a 45%, #8c121d 100%);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+        }
+        .hero-stage.tilting { transition: transform 0.08s linear, box-shadow 0.4s ease; }
+        .hero-stage:hover {
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.08),
+                0 0 20px rgba(225,6,0,0.25),
+                0 0 40px rgba(225,6,0,0.15),
+                0 20px 50px rgba(0,0,0,0.4);
+        }
+        /* Circuit topography background overlay */
+        .hero-stage::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background:
+              radial-gradient(ellipse 50% 40% at 25% 15%, rgba(255,255,255,0.18), transparent 65%),
+              radial-gradient(ellipse 120% 80% at 80% 90%, transparent 30%, rgba(255,255,255,0.15) 31%, transparent 32%),
+              radial-gradient(ellipse 110% 70% at 80% 90%, transparent 40%, rgba(255,255,255,0.13) 41%, transparent 42%),
+              radial-gradient(ellipse 100% 60% at 80% 90%, transparent 50%, rgba(255,255,255,0.11) 51%, transparent 52%),
+              radial-gradient(ellipse 90% 50% at 80% 90%, transparent 60%, rgba(255,255,255,0.09) 61%, transparent 62%),
+              radial-gradient(ellipse 80% 40% at 80% 90%, transparent 70%, rgba(255,255,255,0.13) 71%, transparent 72%);
+            pointer-events: none;
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
+        }
+        .hero-stage:hover::before { opacity: 1; }
+        /* Parallax depth layers — only active on hover to keep resting-state alignment */
+        .hero-content > * { transition: transform 0.35s ease; }
+        .hero-stage:hover .hero-content .hero-round { transform: translateZ(42px); }
+        .hero-stage:hover .hero-content .hero-date-row { transform: translateZ(28px); }
+        .hero-stage:hover .hero-content .hero-circuit { transform: translateZ(18px); }
+        .hero-stage:hover .hero-content .hero-cd { transform: translateZ(12px); }
+        .hero-speed-lines {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0.3;
+            z-index: 1;
+        }
+        .hero-speed-lines span {
+            position: absolute;
+            left: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.7), transparent);
+            animation: drift-rev var(--dur, 3s) linear infinite;
+            animation-delay: var(--delay, 0s);
+        }
+        @keyframes drift-rev {
+            0% { transform: translateX(260%); }
+            100% { transform: translateX(-60%); }
+        }
+        .hero-content {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0 0 24px 24px;
+            gap: 8px;
+            transform-style: preserve-3d;
+        }
+        .hero-gp { margin-bottom: 2px; }
+        .hero-round {
+            font-size: 26px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.01em;
+            font-variant-numeric: tabular-nums;
+        }
+        .hero-round b { font-weight: 800; }
+        .hero-round-sub { font-size: 15px; font-weight: 400; color: rgba(255,255,255,0.7); }
+        .hero-date-row { display: flex; align-items: flex-end; gap: 12px; }
+        .hero-date {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1;
+            letter-spacing: -0.01em;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+        }
+        .hero-date-meta { display: flex; flex-direction: column; gap: 1px; padding-bottom: 3px; }
+        .hero-dow, .hero-time {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.15;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Date row carousel — rotates through all weekend sessions */
+        .hero-date-swap {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            padding: 6px 0;
+        }
+        .hero-date-placeholder {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+        .hero-date-sizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            visibility: hidden;
+        }
+        .ds {
+            position: absolute;
+            left: 0;
+            top: 6px;
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            white-space: nowrap;
+            will-change: transform, opacity, filter;
+            animation-name: heroSwap;
+            animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+            animation-iteration-count: infinite;
+            animation-fill-mode: both;
+        }
+        .ds.static {
+            position: static;
+            animation: none;
+        }
+
+        .hero-circuit { display: flex; align-items: center; gap: 14px; }
+        .hero-circuit-ic { width: 32px; height: 32px; color: rgba(255,255,255,0.95); flex: none; }
+        .hero-circuit-ic svg {
+            width: 100%; height: 100%;
+            fill: none; stroke: currentColor;
+            stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .hero-circuit-name {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.01em;
+            line-height: 1;
+        }
+        .hero-circuit-name .sizer { visibility: hidden; }
+        .hero-circuit-name .n {
+            position: absolute; left: 0; top: 0; white-space: nowrap;
+            will-change: transform, opacity, filter;
+            animation: swap 7s cubic-bezier(.4,0,.2,1) infinite;
+        }
+        .hero-circuit-name .n.b { animation-delay: 3.5s; }
+        @keyframes swap {
+            0%   { opacity: 0; transform: translateY(115%); filter: blur(7px); }
+            18%  { opacity: 1; transform: translateY(0);    filter: blur(0); }
+            54%  { opacity: 1; transform: translateY(0);    filter: blur(0); }
+            72%  { opacity: 0; transform: translateY(-115%); filter: blur(7px); }
+            100% { opacity: 0; transform: translateY(-115%); filter: blur(7px); }
+        }
+        .hero-cd {
+            font-size: 40px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.01em;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Section titles - now outside block */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-top: 10px;
+            position: relative;
+        }
+        .section-title {
+            font-family: var(--font-sans);
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--gray-1);
+        }
+
+        /* Section block - colored background, no border */
+        .section-block {
+            background: var(--gray-7);
+            border-radius: 16px;
+            padding: 32px 24px 48px 24px;
+            position: relative;
+            min-height: 120px;
+            transition: box-shadow 0.3s ease;
+        }
+        .section-block:hover {
+            box-shadow: 0 0 0 3px #E10600,
+                        0 10px 28px rgba(225, 6, 0, 0.18);
+        }
+
+        /* LAP TIME card — 2-column layout (driver+stats | sectors) with vertical divider */
+        .laptime-card { color: var(--gray-2); }
+        .laptime-grid {
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 28px;
+            align-items: stretch;
+        }
+        .lt-divider {
+            background: var(--gray-6);
+            align-self: stretch;
+        }
+        .lt-left {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            min-width: 0;
+        }
+        .lt-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .lt-driver-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .lt-driver-name { font-family: var(--font-sans); font-size: 28px; font-weight: 700; color: var(--gray-1); line-height: 1.05; }
+        .lt-driver-team { font-family: var(--font-sans); font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+        .lt-time-wrap { text-align: right; flex-shrink: 0; }
+        .lt-time-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--gray-4); margin-bottom: 6px; }
+        .lt-time { font-family: var(--font-sans); font-size: 32px; font-weight: 700; color: #fff; line-height: 1; }
+        .lt-time--fl { color: #8B5CF6; }
+
+        .lt-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 10px;
+        }
+        .lt-stat-box {
+            background: #141414;
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 56px;
+        }
+        .lt-stat-box.gap-box {
+            grid-row: 1 / 3;
+            min-height: 122px;
+        }
+        .lt-stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-4); }
+        .lt-stat-sublabel { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-4); margin-top: 2px; }
+        .lt-stat-value { font-family: var(--font-sans); font-size: 22px; font-weight: 700; color: var(--gray-1); line-height: 1; margin-top: auto; padding-top: 8px; }
+        .lt-stat-value.red { color: var(--accent-red); }
+        .lt-stat-value small { font-size: 13px; color: var(--gray-3); font-weight: 400; font-family: var(--font-sans); margin-left: 3px; }
+
+        .lt-last-year {
+            background: #141414;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .lt-ly-left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .lt-ly-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-4); }
+        .lt-ly-row { display: flex; align-items: baseline; gap: 10px; }
+        .lt-ly-driver { font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--accent-red); }
+        .lt-ly-time { font-family: var(--font-sans); font-size: 18px; font-weight: 700; color: var(--gray-1); }
+        .lt-ly-delta { font-size: 13px; font-family: var(--font-sans); color: var(--gray-3); flex-shrink: 0; }
+
+        .lt-sectors-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+        .lt-sectors-title { font-family: var(--font-sans); font-size: 18px; font-weight: 700; color: var(--gray-1); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .lt-sector-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 8px 2px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .lt-sector-row:last-child { border-bottom: none; }
+        .lt-sector-name { font-family: var(--font-sans); font-size: 18px; font-weight: 700; color: var(--gray-1); }
+        .lt-sector-time { font-family: var(--font-sans); font-size: 18px; font-weight: 700; color: var(--gray-1); }
+        .lt-sector-time small { font-size: 12px; color: var(--gray-3); font-weight: 400; font-family: var(--font-sans); margin-left: 2px; }
+        /* Fastest Lap card — 3-box row (TOP SPEED | TYRE | LAST YEAR) */
+        .lt-stats-row-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.4fr;
+            gap: 10px;
+        }
+        .lt-ly-box { justify-content: flex-start; gap: 4px; }
+        .lt-ly-box .lt-stat-value {
+            margin-top: 0;
+            padding-top: 4px;
+            font-size: 18px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .lt-stat-sub {
+            font-size: 14px;
+            color: var(--gray-1);
+            font-weight: 700;
+            font-family: var(--font-sans);
+            line-height: 1;
+        }
+        .lt-fastest-delta { font-size: 13px; font-weight: 400; font-family: var(--font-sans); }
+        .lt-placeholder {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 160px; color: var(--gray-4); font-size: 14px; letter-spacing: 0.5px;
+        }
+        /* Pole card unavailable state (GP weekend in progress, qualifying not done) */
+        .lt-unavailable {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 18px; min-height: 300px; text-align: center; padding: 24px;
+        }
+        .lt-x-icon {
+            width: 52px; height: 52px;
+            stroke: var(--gray-4); stroke-width: 2; stroke-linecap: round; fill: none;
+        }
+        .lt-unavailable-text {
+            font-size: 15px; color: var(--gray-3); letter-spacing: 0.5px; line-height: 1.5;
+            max-width: 280px;
+        }
+        .meta-bottom {
+            position: absolute;
+            bottom: 14px;
+            right: 20px;
+            font-size: 12px;
+            color: var(--gray-4);
+            font-family: var(--font-sans);
+            letter-spacing: 0.5px;
+        }
+
+        /* Cards Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: transparent;
+            padding: 20px;
+        }
+
+        /* Qualifying Results - no borders, no lines */
+        .qual-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .qual-table th {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gray-3);
+            padding: 16px 12px;
+            text-align: left;
+            border-bottom: none;
+        }
+        .qual-table td {
+            padding: 14px 12px;
+            font-size: 15px;
+            border-bottom: none;
+        }
+
+        .pos-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .pos-1 { background: #C9A84C; color: #000; }
+        .pos-2 { background: #A8A8A8; color: #000; }
+        .pos-3 { background: #9C7A4D; color: #fff; }
+        .pos-other { background: transparent; color: var(--gray-1); }
+
+        .driver-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .team-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--gray-3);
+        }
+
+        .lap-time {
+            font-family: var(--font-sans);
+            font-size: 15px;
+            color: var(--gray-3);
+        }
+        .lap-time-best {
+            color: var(--gray-1);
+            font-weight: 600;
+        }
+
+        /* Standings - no borders, no lines */
+        .standing-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+        }
+        .standing-row:last-child { border-bottom: none; }
+
+        .standing-pos {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 700;
+            min-width: 30px;
+            color: var(--gray-2);
+        }
+        .standing-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .standing-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .standing-driver {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-1);
+        }
+        .standing-team {
+            font-size: 11px;
+            color: var(--gray-4);
+        }
+        .standing-points {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-1);
+        }
+        .standing-bar {
+            height: 3px;
+            background: var(--gray-bar);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .standing-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--gray-2);
+        }
+
+        /* Constructor Standings - no borders */
+        .constructor-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            margin-bottom: 4px;
+        }
+        .constructor-pos {
+            font-family: var(--font-sans);
+            font-size: 18px;
+            font-weight: 700;
+            min-width: 30px;
+            color: var(--gray-2);
+        }
+        .constructor-color {
+            width: 3px; height: 36px;
+            border-radius: 2px;
+            background: var(--gray-3);
+        }
+        .constructor-info {
+            flex: 1;
+        }
+        .constructor-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-1);
+        }
+        .constructor-wins {
+            font-size: 13px;
+            color: var(--gray-4);
+            font-weight: 400;
+        }
+        .constructor-points {
+            font-family: var(--font-sans);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-1);
+        }
+
+        /* Predictions - horizontal layout (Stars on left, Podium on right) */
+        .prediction-card {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 16px;
+        }
+        .prediction-card h3 {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            color: var(--gray-2);
+        }
+        .podium-prediction {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 32px;
+            align-items: start;
+        }
+        .podium-stars {
+            display: flex;
+            flex-direction: column;
+        }
+        .podium-stars h3 {
+            margin-bottom: 12px;
+        }
+        /* Nested block around podium */
+        .podium-blocks-area {
+            display: flex;
+            flex-direction: column;
+            background: #141414;
+            border-radius: 12px;
+            padding: 24px 20px;
+        }
+        .podium-blocks-area h3 {
+            margin-bottom: 20px;
+            color: var(--gray-1);
+        }
+        .podium-blocks {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 28px;
+            padding: 8px 0 4px 0;
+        }
+        .podium-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .podium-driver-name-top {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-2);
+            text-align: center;
+            margin-bottom: 2px;
+        }
+        .podium-prob-top {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-1);
+            text-align: center;
+            font-family: var(--font-sans);
+        }
+        .podium-block {
+            width: 80px;
+            border-radius: 40px 40px 8px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sans);
+            font-weight: 700;
+            box-shadow: inset 0 4px 0 rgba(255,255,255,0.15), 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .podium-1 { height: 130px; background: #C9A84C; color: #000; font-size: 26px; }
+        .podium-2 { height: 100px; background: #A8A8A8; color: #000; font-size: 22px; }
+        .podium-3 { height: 78px; background: #9C7A4D; color: #fff; font-size: 18px; }
+
+        /* Star Drivers - no borders */
+        .star-driver {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 14px;
+            margin-bottom: 6px;
+            border-left: none;
+        }
+        .star-info { flex: 1; }
+        .star-name { font-size: 14px; font-weight: 600; color: var(--gray-1); }
+        .star-name .star-team {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--gray-4);
+            margin-left: 6px;
+        }
+        .star-reason { font-size: 12px; color: var(--gray-3); margin-top: 2px; }
+        .star-confidence {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-2);
+            min-width: 32px;
+            text-align: right;
+        }
+
+        /* WDC Probability - inner secondary card beside legend, horizontal row */
+        .wdc-row {
+            display: flex;
+            align-items: stretch;
+            gap: 28px;
+        }
+        .wdc-row .wdc-inner-card {
+            flex: 1.35 1 0;
+            min-width: 0;
+        }
+        .wdc-row .wdc-legend {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .wdc-inner-card {
+            display: flex;
+            align-items: stretch;
+            gap: 28px;
+            background: #141414;
+            border-radius: 16px;
+            padding: 26px 28px;
+        }
+        .wdc-inner-left {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 18px;
+        }
+        .wdc-inner-right {
+            flex: 0 0 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #wdcProbCard { width: 250px; }
+        #wdcLegend { flex: 1 1 0; min-width: 0; }
+        .wdc-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+        .wdc-roulette-wrapper {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+        }
+        .wdc-roulette {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+        }
+        .wdc-roulette-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 96px;
+            height: 96px;
+            background: #141414;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .wdc-center-label {
+            font-size: 10px;
+            color: var(--gray-4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .wdc-center-value {
+            font-family: var(--font-sans);
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--gray-1);
+        }
+        .wdc-center-subtitle {
+            font-size: 9px;
+            color: var(--gray-4);
+            margin-top: 2px;
+            text-align: center;
+            padding: 0 6px;
+            line-height: 1.3;
+        }
+        .wdc-inner-left .feas-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .wdc-inner-left .feas-pts {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--gray-1);
+        }
+        .wdc-inner-left .feas-label {
+            font-size: 15px;
+            color: var(--gray-4);
+            font-weight: 500;
+        }
+        .wdc-capsules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .wdc-capsule {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border-radius: 999px;
+            padding: 6px 13px;
+            font-family: var(--font-sans);
+            border: 1.5px solid;
+        }
+        .wdc-capsule .cap-code {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .wdc-capsule .cap-gap {
+            font-size: 12px;
+            color: var(--gray-3);
+            font-variant-numeric: tabular-nums;
+        }
+        .wdc-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+        .wdc-legend-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 0 10px 7px;
+        }
+        .wdc-legend-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 13px;
+            bottom: 13px;
+            width: 2px;
+            border-radius: 1px;
+            background: transparent;
+            transition: background-color 0.2s ease;
+        }
+        .wdc-legend-item.active::before {
+            background: var(--bar-color, var(--accent-red));
+        }
+        .wdc-legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .wdc-legend-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .wdc-legend-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .wdc-legend-reason {
+            font-size: 12px;
+            color: var(--gray-4);
+            margin-top: 2px;
+        }
+        .wdc-legend-prob {
+            font-family: var(--font-sans);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-2);
+        }
+
+        /* Weekend Timeline - Floating Sidebar - grayscale */
+        .timeline-float {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: var(--gray-7);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 24px 22px;
+        }
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .timeline-label {
+            font-size: 15px;
+            font-family: var(--font-sans);
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        .timeline-date {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        /* Status by font weight only - grayscale */
+        .timeline-item.done .timeline-label {
+            color: var(--gray-3);
+            font-weight: 600;
+        }
+        .timeline-item.done .timeline-date {
+            color: var(--gray-4);
+            font-weight: 400;
+        }
+        .timeline-item.upcoming .timeline-label {
+            color: var(--gray-3);
+            font-weight: 500;
+        }
+        .timeline-item.upcoming .timeline-date {
+            color: var(--gray-4);
+            font-weight: 400;
+        }
+        /* Dim non-current sessions so the active one stands out */
+        .timeline-item.done,
+        .timeline-item.upcoming {
+            opacity: 0.5;
+        }
+        /* Current (live) session — white text with breathing animation */
+        .timeline-item.current .timeline-label {
+            color: #fff;
+            font-weight: 900;
+            animation: timelineBreathe 1.6s ease-in-out infinite;
+        }
+        .timeline-item.current .timeline-date {
+            color: #fff;
+            font-weight: 600;
+            animation: timelineBreathe 1.6s ease-in-out infinite;
+        }
+        @keyframes timelineBreathe {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.55; }
+        }
+
+        /* Refresh button — moved to floating-refresh class */
+        /* Spinning animation for loading */
+        .refresh-icon.spinning {
+            animation: spinRefresh 0.8s linear;
+        }
+        @keyframes spinRefresh {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tabs - grayscale */
+        /* Segmented tab control — each option is a background block; active block turns red and becomes a pill; blocks touch */
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+        /* Tab-bar inline inside section-header (right-aligned) */
+        .section-header .tab-bar {
+            margin-left: auto;
+            margin-bottom: 0;
+        }
+        .tab-btn {
+            padding: 9px 18px;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--gray-4);
+            border: none;
+            border-radius: 10px;
+            transition: border-radius 0.18s ease, background 0.18s ease, color 0.18s ease, font-weight 0.18s ease;
+        }
+        .tab-btn.active {
+            background: #E10600;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 999px;
+        }
+        .tab-btn:hover:not(.active) {
+            color: #fff;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Footer - no border */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-5);
+            font-size: 12px;
+            margin-top: 40px;
+        }
+        .footer p {
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Inline predict button inside section-block */
+        .pred-inline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .pred-ai-btn {
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-family: var(--font-sans);
+            background: #E10600;
+            color: #fff;
+            transition: opacity 0.2s;
+        }
+        .pred-ai-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .pred-ai-btn.loading { animation: blink 0.8s ease-in-out infinite; }
+        .wdc-ai-btn { font-size: 13px; padding: 8px 18px; }
+
+        /* Settings bar — always visible */
+        .api-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .api-status { font-size: 12px; color: var(--gray-4); flex: 1; }
+        .api-btn { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font-sans); }
+        .api-settings-btn { background: transparent; color: var(--gray-4); font-size: 16px; padding: 4px 8px; }
+        .api-save-btn { background: #E10600; color: #fff; }
+        .api-settings-panel { background: var(--gray-7); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+        .api-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .api-row:last-child { margin-bottom: 0; }
+        .api-row label { font-size: 12px; color: var(--gray-3); min-width: 60px; }
+        .api-row select, .api-row input { background: var(--bg-primary); border: 1px solid var(--border); color: var(--gray-1); padding: 8px 10px; border-radius: 6px; font-size: 13px; font-family: var(--font-sans); flex: 1; }
+        .api-row select:focus, .api-row input:focus { outline: none; border-color: #E10600; }
+        .api-actions { justify-content: flex-end; }
+        .api-hint { font-size: 11px; color: var(--gray-4); }
+        .api-status.error { color: #E10600; }
+        .api-status.success { color: #00D26A; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-inner { flex-direction: column; align-items: flex-start; }
+            .hero-left { flex: 0 0 auto; width: 100%; max-width: 100%; }
+            .hero-stage { flex: 1 1 auto; width: 100%; max-width: 100%; }
+            .hero-title { font-size: clamp(21px, 7vw, 30px); -webkit-line-clamp: 3; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
+
+            .podium-prediction {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .podium-1 { width: 60px; height: 90px; font-size: 18px; }
+            .podium-2 { width: 60px; height: 75px; font-size: 15px; }
+            .podium-3 { width: 60px; height: 60px; font-size: 13px; }
+
+            .wdc-roulette-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .wdc-row {
+                flex-direction: column;
+            }
+            .wdc-inner-card {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 20px;
+            }
+            .wdc-inner-right {
+                flex: 0 0 auto;
+            }
+            .wdc-roulette-wrapper {
+                width: 220px;
+                height: 220px;
+            }
+
+            .timeline-float {
+                position: static;
+                transform: none;
+                margin: 20px auto;
+                max-width: 400px;
+            }
+            .floating-countdown { display: none; }
+            .timeline {
+                flex-direction: row;
+                justify-content: center;
+                gap: 16px;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Left side stack: countdown on top, (timeline + refresh) below */
+        .left-side-stack {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+        .left-side-stack.visible {
+            opacity: 1;
+            transform: translateY(-50%);
+        }
+        .left-side-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            width: 188px;
+        }
+        /* When inside left-side-stack, timeline-float shouldn't be fixed */
+        .left-side-stack .timeline-float {
+            position: static !important;
+            transform: none !important;
+            top: auto !important;
+            margin: 0;
+            flex: 1;
+        }
+        .floating-countdown {
+            width: 188px;
+            background: linear-gradient(90deg, #C50500 0%, #E10600 50%, #C50500 100%);
+            background-size: 200% 100%;
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: white;
+            animation: cardFlow 8s linear infinite;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: auto; /* changed from none: card needs hover to flip to round/GP info */
+            position: relative;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .floating-countdown.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .floating-refresh {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--gray-6);
+            color: var(--gray-3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: color 0.2s, background 0.2s, transform 0.2s;
+            pointer-events: auto;
+            flex-shrink: 0;
+            margin-top: 4px;
+            align-self: flex-start;
+        }
+        .floating-refresh:hover { color: #E10600; background: var(--gray-5); transform: rotate(90deg); }
+        .floating-refresh svg { transition: inherit; }
+        .floating-refresh .refresh-icon.spinning svg { animation: spinRefresh 0.8s linear; }
+        .floating-cd-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.75);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .floating-cd-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 2px;
+        }
+        .floating-cd-num {
+            font-family: var(--font-sans);
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        .floating-cd-sep {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Hover flip: countdown -> round + GP name */
+        .floating-cd-main {
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .floating-cd-hover {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 14px 12px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .floating-countdown:hover .floating-cd-main {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+        .floating-countdown:hover .floating-cd-hover {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .floating-cd-hover-label {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.75);
+        }
+        .floating-cd-gp {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Countdown */
+        .countdown-wrapper {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            border: none;
+            padding: 8px 10px;
+            flex: 1;
+        }
+        .countdown-num {
+            font-family: var(--font-sans);
+            font-size: 34px;
+            font-weight: 700;
+            color: white;
+        }
+        .countdown-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <!-- LEFT: identity block (outside the card) -->
+    <div class="hero-left">
+      <img class="f1-logo-svg" src="f1-logo.svg" alt="F1">
+
+      <div class="hero-gp">
+        <h1 class="hero-title" id="heroTitle">DUTCH GRAND PRIX</h1>
+        <p class="hero-subtitle" id="heroSubtitle">FORMULA 1 HEINEKEN DUTCH GRAND PRIX 2026</p>
+      </div>
+
+      <div class="session-status" id="sessionStatus">
+        <div class="session-dot" id="sessionDot"></div>
+        <span class="session-text" id="sessionText">UPCOMING RACE</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: editorial red stage with data block -->
+    <div class="hero-stage" id="heroStage">
+      <div class="hero-content">
+        <div class="hero-round"><b id="heroRoundBig">12</b><span class="hero-round-sub">/22</span></div>
+
+        <div class="hero-date-row">
+          <div class="hero-date-swap" id="heroDateSwap">
+            <div class="hero-date-placeholder">
+              <div class="hero-date">Aug 21</div>
+              <div class="hero-date-meta">
+                <div class="hero-dow">FP1</div>
+                <div class="hero-time">10:30</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-circuit">
+          <span class="hero-circuit-ic">
+            <svg viewBox="0 0 24 24"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10.5" r="2.6"/></svg>
+          </span>
+          <span class="hero-circuit-name">
+            <span class="sizer" id="heroCircuitSizer">Netherlands</span>
+            <span class="n a" id="heroCircuitA">Zandvoort</span>
+            <span class="n b" id="heroCircuitB">Netherlands</span>
+          </span>
+        </div>
+
+        <div class="hero-cd" id="cd">--:--:--</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Weekend Timeline - Floating Sidebar -->
+<!-- Left side stack: countdown + (timeline + refresh) -->
+<div class="left-side-stack">
+    <div class="floating-countdown" id="floatingCd">
+        <div class="floating-cd-main">
+            <div class="floating-cd-label">Time to Lights Out</div>
+            <div class="floating-cd-row">
+                <span class="floating-cd-num" id="fcd-h">--</span><span class="floating-cd-sep">:</span>
+                <span class="floating-cd-num" id="fcd-m">--</span><span class="floating-cd-sep">:</span>
+                <span class="floating-cd-num" id="fcd-s">--</span>
+            </div>
+        </div>
+        <div class="floating-cd-hover">
+            <div class="floating-cd-hover-label" id="fcdRoundLabel">ROUND --</div>
+            <div class="floating-cd-gp" id="fcdGp">--</div>
+        </div>
+    </div>
+    <div class="left-side-row">
+        <div class="timeline-float">
+            <div class="timeline" id="timelineList"></div>
+        </div>
+        <button class="floating-refresh" onclick="refreshData()" title="Refresh data">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/>
+                <polyline points="21 3 21 8 16 8"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Results -->
+<section class="container fade-in">
+    <div class="section-header">
+        <div class="section-title" id="resultTitle">RESULTS</div>
+        <div class="tab-bar" id="sessionTabs">
+            <button class="tab-btn" data-session="race" onclick="switchSession('race')">Race</button>
+            <button class="tab-btn" data-session="qualifying" onclick="switchSession('qualifying')">Qualifying</button>
+        </div>
+    </div>
+    <div class="section-block">
+        <table class="qual-table" id="resultTable">
+            <thead id="resultTableHead"></thead>
+            <tbody id="resultTableBody"></tbody>
+        </table>
+        <div class="meta-bottom" id="resultMeta">2026-07-26</div>
+    </div>
+</section>
+
+<!-- Standings -->
+<section class="container fade-in">
+    <div class="section-header">
+        <div class="section-title">STANDINGS</div>
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('drivers')">Driver</button>
+            <button class="tab-btn" onclick="switchTab('constructors')">Constructor</button>
+        </div>
+    </div>
+    <div class="tab-content active" id="tab-drivers">
+        <div class="section-block">
+            <div id="driverStandingsCard"></div>
+            <div class="meta-bottom">After Round 10 · Belgian GP</div>
+        </div>
+    </div>
+    <div class="tab-content" id="tab-constructors">
+        <div class="section-block">
+            <div id="constructorStandings"></div>
+            <div class="meta-bottom">After Round 10 · Belgian GP</div>
+        </div>
+    </div>
+</section>
+
+<!-- LAP TIME (Pole + Fastest Lap) -->
+<section class="container fade-in">
+    <div class="section-header">
+        <div class="section-title">LAP TIME</div>
+        <div class="tab-bar" id="lapTabs">
+            <button class="tab-btn active" data-lap="pole" onclick="switchLapTab('pole')">Pole</button>
+            <button class="tab-btn" data-lap="fastest" onclick="switchLapTab('fastest')">Fastest Lap</button>
+        </div>
+    </div>
+    <div class="section-block">
+        <div class="laptime-card">
+            <div id="lapPole"></div>
+            <div id="lapFastest" style="display:none"></div>
+        </div>
+        <div class="meta-bottom" id="lapTimeMeta">Hungarian GP</div>
+    </div>
+</section>
+
+<!-- Predictions + WDC (Tabbed) -->
+<section class="container fade-in">
+    <div class="section-header">
+        <div class="section-title">PREDICTION</div>
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('race')">RACE</button>
+            <button class="tab-btn" onclick="switchTab('wdc')">WDC</button>
+        </div>
+    </div>
+
+        </div>
+    </div>
+
+    <div class="api-bar" style="margin-bottom:8px">
+        <span class="api-status" id="apiStatus">API Key required</span>
+        <button class="api-btn api-settings-btn" onclick="toggleApiSettings()" title="Settings">⚙</button>
+    </div>
+    <div class="api-settings-panel" id="apiSettings" style="display:none">
+        <div class="api-row"><label>Provider</label><select id="aiProvider"><option value="deepseek">DeepSeek</option><option value="kimi">Kimi (Moonshot)</option><option value="zhipu">Zhipu (GLM)</option></select></div>
+        <div class="api-row"><label>API Key</label><input type="password" id="aiKey" placeholder="sk-..."></div>
+        <div class="api-row"><label>Model</label><input type="text" id="aiModel" placeholder="Auto (provider default)"></div>
+        <div class="api-row api-actions"><button class="api-btn api-save-btn" onclick="saveApiKey()">Save</button><span class="api-hint" id="apiHint">Saved locally</span></div>
+    </div>
+
+    <div class="tab-content active" id="tab-race">
+        <div class="section-block">
+            <div class="podium-prediction">
+                <div class="podium-stars">
+                    <div class="pred-inline-header">
+                        <h3>STARS TO WATCH</h3>
+                        <button class="pred-ai-btn race-ai-btn" id="raceAiBtn" onclick="runRacePredict()">AI Predict</button>
+                    </div>
+                    <div id="starDrivers"></div>
+                </div>
+                <div class="podium-blocks-area">
+                    <div class="pred-inline-header">
+                        <h3>PREDICTED PODIUM</h3>
+                    </div>
+                <div class="podium-blocks">
+                    <div class="podium-slot">
+                        <div class="podium-block podium-1">P1</div>
+                        <div class="podium-driver-name-top"></div>
+                        <div class="podium-prob-top"></div>
+                    </div>
+                    <div class="podium-slot">
+                        <div class="podium-block podium-2">P2</div>
+                        <div class="podium-driver-name-top"></div>
+                        <div class="podium-prob-top"></div>
+                    </div>
+                    <div class="podium-slot">
+                        <div class="podium-block podium-3">P3</div>
+                        <div class="podium-driver-name-top"></div>
+                        <div class="podium-prob-top"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="meta-bottom">Dutch Grand Prix · AI Prediction</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="tab-wdc">
+        <div class="section-block">
+            <div class="pred-inline-header" style="justify-content:flex-end">
+                <button class="pred-ai-btn wdc-ai-btn" onclick="runWDCPredict()">AI Predict</button>
+            </div>
+            <div class="wdc-row">
+                <div class="wdc-inner-card">
+                    <div class="wdc-inner-left" id="wdcFeasibilityCard"></div>
+                    <div class="wdc-inner-right" id="wdcProbCard"></div>
+                </div>
+                <div id="wdcLegend" class="wdc-legend"></div>
+            </div>
+            <div class="meta-bottom" id="wdcMeta">Hungarian GP · After Round 11</div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">
+    <p>F1 2026 Season Dashboard · Data via F1 MCP Server · <span id="footer-update">Loading...</span></p>
+    <p style="margin-top:4px;">Predictions are AI-generated estimates based on qualifying data, championship standings & historical track performance</p>
+</div>
+
+<script>
+// ====== CONSTANTS & DATA ======
+const TEAM_COLORS = { "Mercedes":"#00D7B6","Ferrari":"#ED1131","McLaren":"#F47600","Red Bull Racing":"#4781D7","Red Bull":"#4781D7","Racing Bulls":"#6C98FF","RB F1 Team":"#6C98FF","Alpine":"#00A1E8","Alpine F1 Team":"#00A1E8","Audi":"#F50537","Haas":"#9C9FA2","Haas F1 Team":"#9C9FA2","Aston Martin":"#229971","Williams":"#1868DB","Cadillac":"#909090","Cadillac F1 Team":"#909090" };
+const POS_COLORS = { 1:"#C9A84C", 2:"#A8A8A8", 3:"#9C7A4D" };
+const F1_RED = "#E10600";
+const F1_RED_DIM = "#8A0400";
+function getTeamColor(team) { return TEAM_COLORS[team] || "#888888"; }
+
+// Embedded fallback data — used when data.json fetch fails (e.g. file:// protocol)
+const FALLBACK_DATA = {
+    "event": {
+        "year": 2026,
+        "round": "11",
+        "eventName": "Hungarian Grand Prix",
+        "officialName": "FORMULA 1 AWS HUNGARIAN GRAND PRIX 2026",
+        "location": "Budapest",
+        "circuit": "Hungaroring",
+        "date": "2026-07-26",
+        "weekendStart": "2026-07-24T11:30:00Z",
+        "weekendEnd": "2026-07-26T17:00:00Z",
+        "qualifyingEnd": "2026-07-25T16:00:00Z",
+        "sessions": {
+            "race": { "name": "Race", "date": "2026-07-26T13:00:00Z" },
+            "qualifying": { "name": "Qualifying", "date": "2026-07-25T14:00:00Z" }
+        }
+    },
+    "standings": {
+        "drivers": [
+            {"pos":1,"name":"Kimi Antonelli","team":"Mercedes","points":219,"wins":6},
+            {"pos":2,"name":"Lewis Hamilton","team":"Ferrari","points":169,"wins":1},
+            {"pos":3,"name":"George Russell","team":"Mercedes","points":160,"wins":2},
+            {"pos":4,"name":"Charles Leclerc","team":"Ferrari","points":138,"wins":1},
+            {"pos":5,"name":"Lando Norris","team":"McLaren","points":128,"wins":1},
+            {"pos":6,"name":"Max Verstappen","team":"Red Bull","points":109,"wins":0},
+            {"pos":7,"name":"Oscar Piastri","team":"McLaren","points":92,"wins":0},
+            {"pos":8,"name":"Isack Hadjar","team":"Red Bull","points":68,"wins":0},
+            {"pos":9,"name":"Liam Lawson","team":"RB F1 Team","points":43,"wins":0},
+            {"pos":10,"name":"Pierre Gasly","team":"Alpine F1 Team","points":42,"wins":0},
+            {"pos":11,"name":"Arvid Lindblad","team":"RB F1 Team","points":23,"wins":0},
+            {"pos":12,"name":"Franco Colapinto","team":"Alpine F1 Team","points":19,"wins":0},
+            {"pos":13,"name":"Oliver Bearman","team":"Haas F1 Team","points":18,"wins":0},
+            {"pos":14,"name":"Gabriel Bortoleto","team":"Audi","points":10,"wins":0},
+            {"pos":15,"name":"Carlos Sainz","team":"Williams","points":6,"wins":0},
+            {"pos":16,"name":"Alexander Albon","team":"Williams","points":5,"wins":0},
+            {"pos":17,"name":"Esteban Ocon","team":"Haas F1 Team","points":3,"wins":0},
+            {"pos":18,"name":"Nico Hulkenberg","team":"Audi","points":2,"wins":0},
+            {"pos":19,"name":"Fernando Alonso","team":"Aston Martin","points":1,"wins":0},
+            {"pos":20,"name":"Lance Stroll","team":"Aston Martin","points":0,"wins":0},
+            {"pos":21,"name":"Valtteri Bottas","team":"Cadillac F1 Team","points":0,"wins":0},
+            {"pos":22,"name":"Sergio Perez","team":"Cadillac F1 Team","points":0,"wins":0}
+        ],
+        "constructors": [
+            {"pos":1,"name":"Mercedes","points":379,"wins":8},
+            {"pos":2,"name":"Ferrari","points":307,"wins":2},
+            {"pos":3,"name":"McLaren","points":220,"wins":1},
+            {"pos":4,"name":"Red Bull","points":177,"wins":0},
+            {"pos":5,"name":"RB F1 Team","points":66,"wins":0},
+            {"pos":6,"name":"Alpine F1 Team","points":61,"wins":0},
+            {"pos":7,"name":"Haas F1 Team","points":21,"wins":0},
+            {"pos":8,"name":"Audi","points":12,"wins":0},
+            {"pos":9,"name":"Williams","points":11,"wins":0},
+            {"pos":10,"name":"Aston Martin","points":1,"wins":0},
+            {"pos":11,"name":"Cadillac F1 Team","points":0,"wins":0}
+        ]
+    },
+    "qualifying": [
+        {"pos":1,"name":"Lando Norris","team":"McLaren","q1":"1:18.277","q2":"1:17.456","q3":"1:17.207","gap":""},
+        {"pos":2,"name":"Lewis Hamilton","team":"Ferrari","q1":"1:18.730","q2":"1:17.803","q3":"1:17.219","gap":"+0.012"},
+        {"pos":3,"name":"Charles Leclerc","team":"Ferrari","q1":"1:18.984","q2":"1:17.626","q3":"1:17.445","gap":"+0.238"},
+        {"pos":4,"name":"Kimi Antonelli","team":"Mercedes","q1":"1:18.726","q2":"1:18.393","q3":"1:17.479","gap":"+0.272"},
+        {"pos":5,"name":"Oscar Piastri","team":"McLaren","q1":"1:18.891","q2":"1:17.928","q3":"1:17.684","gap":"+0.477"},
+        {"pos":6,"name":"Max Verstappen","team":"Red Bull Racing","q1":"1:18.656","q2":"1:18.249","q3":"1:17.725","gap":"+0.518"},
+        {"pos":7,"name":"George Russell","team":"Mercedes","q1":"1:18.856","q2":"1:18.445","q3":"1:17.760","gap":"+0.553"},
+        {"pos":8,"name":"Isack Hadjar","team":"Red Bull Racing","q1":"1:18.754","q2":"1:17.872","q3":"1:17.856","gap":"+0.649"},
+        {"pos":9,"name":"Arvid Lindblad","team":"Racing Bulls","q1":"1:19.233","q2":"1:18.360","q3":"1:18.281","gap":"+1.074"},
+        {"pos":10,"name":"Nico Hulkenberg","team":"Audi","q1":"1:18.796","q2":"1:18.639","q3":"1:18.686","gap":"+1.479"},
+        {"pos":11,"name":"Liam Lawson","team":"Racing Bulls","q1":"1:19.161","q2":"1:18.765","q3":"Q2 exit","gap":""},
+        {"pos":12,"name":"Pierre Gasly","team":"Alpine","q1":"1:19.741","q2":"1:18.844","q3":"Q2 exit","gap":""},
+        {"pos":13,"name":"Franco Colapinto","team":"Alpine","q1":"1:19.771","q2":"1:19.027","q3":"Q2 exit","gap":""},
+        {"pos":14,"name":"Gabriel Bortoleto","team":"Audi","q1":"1:19.069","q2":"1:19.105","q3":"Q2 exit","gap":""},
+        {"pos":15,"name":"Esteban Ocon","team":"Haas F1 Team","q1":"1:20.010","q2":"1:19.734","q3":"Q2 exit","gap":""},
+        {"pos":16,"name":"Fernando Alonso","team":"Aston Martin","q1":"1:20.126","q2":"1:19.808","q3":"Q2 exit","gap":""},
+        {"pos":17,"name":"Oliver Bearman","team":"Haas F1 Team","q1":"1:20.233","q2":"Q1 exit","q3":"Q1 exit","gap":""},
+        {"pos":18,"name":"Carlos Sainz","team":"Williams","q1":"1:20.621","q2":"Q1 exit","q3":"Q1 exit","gap":""},
+        {"pos":19,"name":"Alexander Albon","team":"Williams","q1":"1:20.658","q2":"Q1 exit","q3":"Q1 exit","gap":""},
+        {"pos":20,"name":"Lance Stroll","team":"Aston Martin","q1":"1:20.659","q2":"Q1 exit","q3":"Q1 exit","gap":""},
+        {"pos":21,"name":"Valtteri Bottas","team":"Cadillac","q1":"1:20.886","q2":"Q1 exit","q3":"Q1 exit","gap":""},
+        {"pos":22,"name":"Sergio Perez","team":"Cadillac","q1":"1:21.322","q2":"Q1 exit","q3":"Q1 exit","gap":""}
+    ],
+    "race": [
+        {"pos":1,"name":"Lando Norris","team":"McLaren","time":"1:39:56.180","gap":"","status":"Finished","points":25},
+        {"pos":2,"name":"Max Verstappen","team":"Red Bull Racing","time":"+15.080","gap":"+15.080","status":"Finished","points":18},
+        {"pos":3,"name":"Kimi Antonelli","team":"Mercedes","time":"+18.728","gap":"+18.728","status":"Finished","points":15},
+        {"pos":4,"name":"Charles Leclerc","team":"Ferrari","time":"+23.840","gap":"+23.840","status":"Finished","points":12},
+        {"pos":5,"name":"Lewis Hamilton","team":"Ferrari","time":"+24.540","gap":"+24.540","status":"Finished","points":10},
+        {"pos":6,"name":"Isack Hadjar","team":"Red Bull Racing","time":"+55.488","gap":"+55.488","status":"Finished","points":8},
+        {"pos":7,"name":"George Russell","team":"Mercedes","time":"+57.503","gap":"+57.503","status":"Finished","points":6},
+        {"pos":8,"name":"Liam Lawson","team":"Racing Bulls","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":4},
+        {"pos":9,"name":"Nico Hulkenberg","team":"Audi","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":2},
+        {"pos":10,"name":"Arvid Lindblad","team":"Racing Bulls","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":1},
+        {"pos":11,"name":"Gabriel Bortoleto","team":"Audi","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":12,"name":"Pierre Gasly","team":"Alpine","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":13,"name":"Lance Stroll","team":"Aston Martin","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":14,"name":"Fernando Alonso","team":"Aston Martin","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":15,"name":"Franco Colapinto","team":"Alpine","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":16,"name":"Esteban Ocon","team":"Haas F1 Team","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":17,"name":"Alexander Albon","team":"Williams","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":18,"name":"Carlos Sainz","team":"Williams","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":19,"name":"Oliver Bearman","team":"Haas F1 Team","time":"+1 lap","gap":"+1 lap","status":"Lapped","points":0},
+        {"pos":20,"name":"Oscar Piastri","team":"McLaren","time":"DNF","gap":"","status":"Retired","points":0},
+        {"pos":21,"name":"Sergio Perez","team":"Cadillac","time":"DNF","gap":"","status":"Retired","points":0},
+        {"pos":22,"name":"Valtteri Bottas","team":"Cadillac","time":"DNF","gap":"","status":"Retired","points":0}
+    ],
+    "poleLap": {
+        "driver": "Lando Norris",
+        "code": "NOR",
+        "team": "McLaren",
+        "time": "1:17.207",
+        "gapToP2": 0.012,
+        "tyre": "SOFT",
+        "topSpeed": 327,
+        "sectors": { "s1": "27.364", "s2": "27.621", "s3": "22.222" },
+        "lastYear": {
+            "year": 2025,
+            "driver": "Charles Leclerc",
+            "code": "LEC",
+            "team": "Ferrari",
+            "time": "1:15.372",
+            "delta": 1.835
+        }
+    },
+    "fastestLap": {
+        "driver": "Charles Leclerc",
+        "code": "LEC",
+        "team": "Ferrari",
+        "time": "1:22.000",
+        "tyre": "SOFT",
+        "topSpeed": 320,
+        "sectors": { "s1": "28.807", "s2": "29.754", "s3": "23.439" },
+        "lastYear": {
+            "year": 2025,
+            "driver": "George Russell",
+            "code": "RUS",
+            "team": "Mercedes",
+            "time": "1:19.409",
+            "delta": 2.591
+        }
+    },
+    "lastUpdated": "2026-07-27T06:38:00Z",
+    "nextEvent": {
+        "round": "12",
+        "eventName": "Dutch Grand Prix",
+        "country": "Netherlands",
+        "location": "Zandvoort",
+        "circuit": "Zandvoort",
+        "date": "2026-08-23",
+        "format": "sprint_qualifying",
+        "sessions": {
+            "fp1": {"name":"Practice 1","date":"2026-08-21T10:30:00Z","label":"FP1","day":"Aug 21"},
+            "sq": {"name":"Sprint Qualifying","date":"2026-08-21T14:30:00Z","label":"SQ","day":"Aug 21"},
+            "sprint": {"name":"Sprint","date":"2026-08-22T10:00:00Z","label":"Sprint","day":"Aug 22"},
+            "qualifying": {"name":"Qualifying","date":"2026-08-22T14:00:00Z","label":"Qualifying","day":"Aug 22"},
+            "race": {"name":"Race","date":"2026-08-23T13:00:00Z","label":"Race","day":"Aug 23"}
+        }
+    }
+};
+
+const WDC_PROBS = [
+    {name:"Kimi Antonelli",team:"Mercedes",prob:72,points:219},
+    {name:"Lewis Hamilton",team:"Ferrari",prob:18,points:169},
+    {name:"George Russell",team:"Mercedes",prob:12,points:160},
+    {name:"Charles Leclerc",team:"Ferrari",prob:5,points:138},
+    {name:"Lando Norris",team:"McLaren",prob:3,points:128},
+    {name:"Max Verstappen",team:"Red Bull",prob:2,points:109},
+    {name:"Oscar Piastri",team:"McLaren",prob:1,points:92}
+];
+const STAR_DRIVERS = [
+    {name:"Lando Norris",team:"McLaren",reason:"杆位起步 + McLaren在Hungaroring赛道特性适合",confidence:"高"},
+    {name:"Kimi Antonelli",team:"Mercedes",reason:"WDC领先者，6胜在手，正赛长距离节奏极佳",confidence:"高"},
+    {name:"Lewis Hamilton",team:"Ferrari",reason:"匈牙利大师，P2起步经验优势巨大",confidence:"极高"},
+    {name:"Max Verstappen",team:"Red Bull",reason:"P6起步但Red Bull轮胎管理出色",confidence:"中"},
+    {name:"Oscar Piastri",team:"McLaren",reason:"P5起步，McLaren双车战术配合",confidence:"中"}
+];
+
+// Global state
+let currentSession = 'race';
+let appData = null;
+
+// Full 2026 season schedule (embedded for offline auto-detection)
+const SEASON_2026 = [
+    {round:"1",eventName:"Australian Grand Prix",officialName:"FORMULA 1 QATAR AIRWAYS AUSTRALIAN GRAND PRIX 2026",circuit:"Albert Park",location:"Melbourne",country:"Australia",date:"2026-03-08",format:"conventional"},
+    {round:"2",eventName:"Chinese Grand Prix",officialName:"FORMULA 1 HEINEKEN CHINESE GRAND PRIX 2026",circuit:"Shanghai",location:"Shanghai",country:"China",date:"2026-03-15",format:"sprint_qualifying"},
+    {round:"3",eventName:"Japanese Grand Prix",officialName:"FORMULA 1 ARAMCO JAPANESE GRAND PRIX 2026",circuit:"Suzuka",location:"Suzuka",country:"Japan",date:"2026-03-29",format:"conventional"},
+    {round:"4",eventName:"Miami Grand Prix",officialName:"FORMULA 1 CRYPTO.COM MIAMI GRAND PRIX 2026",circuit:"Miami",location:"Miami Gardens",country:"USA",date:"2026-05-03",format:"sprint_qualifying"},
+    {round:"5",eventName:"Canadian Grand Prix",officialName:"FORMULA 1 LENOVO GRAND PRIX DU CANADA 2026",circuit:"Montreal",location:"Montreal",country:"Canada",date:"2026-05-24",format:"sprint_qualifying"},
+    {round:"6",eventName:"Monaco Grand Prix",officialName:"FORMULA 1 LOUIS VUITTON GRAND PRIX DE MONACO 2026",circuit:"Monaco",location:"Monte Carlo",country:"Monaco",date:"2026-06-07",format:"conventional"},
+    {round:"7",eventName:"Barcelona Grand Prix",officialName:"FORMULA 1 MSC CRUISES GRAN PREMIO DE BARCELONA-CATALUNYA 2026",circuit:"Barcelona",location:"Barcelona",country:"Spain",date:"2026-06-14",format:"conventional"},
+    {round:"8",eventName:"Austrian Grand Prix",officialName:"FORMULA 1 LENOVO AUSTRIAN GRAND PRIX 2026",circuit:"Red Bull Ring",location:"Spielberg",country:"Austria",date:"2026-06-28",format:"conventional"},
+    {round:"9",eventName:"British Grand Prix",officialName:"FORMULA 1 PIRELLI BRITISH GRAND PRIX 2026",circuit:"Silverstone",location:"Silverstone",country:"UK",date:"2026-07-05",format:"sprint_qualifying"},
+    {round:"10",eventName:"Belgian Grand Prix",officialName:"FORMULA 1 MOET & CHANDON BELGIAN GRAND PRIX 2026",circuit:"Spa",location:"Spa",country:"Belgium",date:"2026-07-19",format:"conventional"},
+    {round:"11",eventName:"Hungarian Grand Prix",officialName:"FORMULA 1 AWS HUNGARIAN GRAND PRIX 2026",circuit:"Hungaroring",location:"Budapest",country:"Hungary",date:"2026-07-26",format:"conventional"},
+    {round:"12",eventName:"Dutch Grand Prix",officialName:"FORMULA 1 HEINEKEN DUTCH GRAND PRIX 2026",circuit:"Zandvoort",location:"Zandvoort",country:"Netherlands",date:"2026-08-23",format:"sprint_qualifying"},
+    {round:"13",eventName:"Italian Grand Prix",officialName:"FORMULA 1 PIRELLI GRAN PREMIO D'ITALIA 2026",circuit:"Monza",location:"Monza",country:"Italy",date:"2026-09-06",format:"conventional"},
+    {round:"14",eventName:"Spanish Grand Prix",officialName:"FORMULA 1 TAG HEUER GRAN PREMIO DE ESPANA 2026",circuit:"Madrid",location:"Madrid",country:"Spain",date:"2026-09-13",format:"conventional"},
+    {round:"15",eventName:"Azerbaijan Grand Prix",officialName:"FORMULA 1 QATAR AIRWAYS AZERBAIJAN GRAND PRIX 2026",circuit:"Baku",location:"Baku",country:"Azerbaijan",date:"2026-09-26",format:"conventional"},
+    {round:"16",eventName:"Singapore Grand Prix",officialName:"FORMULA 1 SINGAPORE AIRLINES SINGAPORE GRAND PRIX 2026",circuit:"Marina Bay",location:"Singapore",country:"Singapore",date:"2026-10-11",format:"sprint_qualifying"},
+    {round:"17",eventName:"US Grand Prix",officialName:"FORMULA 1 MSC CRUISES UNITED STATES GRAND PRIX 2026",circuit:"COTA",location:"Austin",country:"USA",date:"2026-10-25",format:"conventional"},
+    {round:"18",eventName:"Mexico City Grand Prix",officialName:"FORMULA 1 GRAN PREMIO DE LA CIUDAD DE MEXICO 2026",circuit:"Mexico City",location:"Mexico City",country:"Mexico",date:"2026-11-01",format:"conventional"},
+    {round:"19",eventName:"Sao Paulo Grand Prix",officialName:"FORMULA 1 MSC CRUISES GRANDE PREMIO DE SAO PAULO 2026",circuit:"Interlagos",location:"Sao Paulo",country:"Brazil",date:"2026-11-08",format:"conventional"},
+    {round:"20",eventName:"Las Vegas Grand Prix",officialName:"FORMULA 1 HEINEKEN LAS VEGAS GRAND PRIX 2026",circuit:"Las Vegas",location:"Las Vegas",country:"USA",date:"2026-11-21",format:"conventional"},
+    {round:"21",eventName:"Qatar Grand Prix",officialName:"FORMULA 1 QATAR AIRWAYS QATAR GRAND PRIX 2026",circuit:"Lusail",location:"Lusail",country:"Qatar",date:"2026-11-29",format:"conventional"},
+    {round:"22",eventName:"Abu Dhabi Grand Prix",officialName:"FORMULA 1 ETIHAD AIRWAYS ABU DHABI GRAND PRIX 2026",circuit:"Yas Marina",location:"Abu Dhabi",country:"UAE",date:"2026-12-06",format:"conventional"}
+];
+
+// ====== UTC+8 (Asia/Shanghai) TIME HELPERS ======
+function parseDate8(str) {
+    if (!str) return new Date(NaN);
+    // Bare "YYYY-MM-DD" means that calendar day in UTC+8, not UTC midnight.
+    return /^\d{4}-\d{2}-\d{2}$/.test(str) ? new Date(str + 'T00:00:00+08:00') : new Date(str);
+}
+function fmtDay8(iso) {
+    const d = parseDate8(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Shanghai' });
+}
+function fmtTime8(iso) {
+    const d = parseDate8(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Shanghai' });
+}
+
+function findCurrentEvent() {
+    const now = new Date();
+    for (const ev of SEASON_2026) {
+        const ed = parseDate8(ev.date).getTime();
+        if (now >= ed - 3 * 86400000 && now <= ed + 1 * 86400000) return ev;
+    }
+    for (const ev of SEASON_2026) {
+        if (now < parseDate8(ev.date).getTime()) return ev;
+    }
+    return SEASON_2026[SEASON_2026.length - 1];
+}
+
+// ====== DATA FETCHING ======
+async function loadData() {
+    let fromServer = false;
+    // Try loading from data.json first
+    try {
+        const resp = await fetch('data.json?_=' + Date.now());
+        if (resp.ok) {
+            appData = await resp.json();
+            fromServer = true;
+        }
+    } catch (e) {
+        console.warn('[F1 Dashboard] data.json not reachable, using embedded data');
+    }
+
+    // Fallback to embedded data
+    if (!appData) appData = FALLBACK_DATA;
+
+    // Auto-detect current event (using embedded season data, works offline)
+    window._currentEvent = findCurrentEvent();
+
+    document.getElementById('footer-update').textContent = fromServer
+        ? 'Last updated: ' + (appData.lastUpdated || 'unknown')
+        : (appData.lastUpdated || 'embedded') + ' · file:// mode';
+    autoDetectSession();
+    renderAll();
+}
+
+function refreshData() {
+    const svg = document.querySelector('.floating-refresh svg');
+    if (svg) { svg.classList.add('spinning'); setTimeout(() => svg.classList.remove('spinning'), 800); }
+    loadData();
+}
+
+function autoDetectSession() {
+    if (!appData || !appData.event) { currentSession = 'race'; return; }
+    const now = new Date();
+    const sessions = appData.event.sessions;
+    const order = ['race','qualifying','fp3','fp2','fp1'];
+
+    for (const s of order) {
+        if (sessions[s] && sessions[s].date) {
+            const t = parseDate8(sessions[s].date);
+            // Session completed if it was within the last 4 days
+            const hoursSince = (now - t) / (1000 * 60 * 60);
+            if (hoursSince >= -2 && hoursSince <= 96) {
+                currentSession = s;
+                return;
+            }
+        }
+    }
+    currentSession = 'race'; // default
+}
+
+function switchSession(session) {
+    currentSession = session;
+    document.querySelectorAll('#sessionTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector('#sessionTabs [data-session="' + session + '"]');
+    if (btn) btn.classList.add('active');
+    renderResults();
+}
+
+// ====== RENDER FUNCTIONS ======
+function getResults() {
+    if (!appData) return [];
+    if (currentSession === 'qualifying') return appData.qualifying || [];
+    return appData.race || [];
+}
+
+function renderResults() {
+    const data = getResults();
+    const isQuali = currentSession === 'qualifying';
+
+    document.getElementById('resultTitle').textContent = 'RESULTS';
+    document.getElementById('resultMeta').textContent = appData ? (appData.event.eventName || '') : '';
+
+    // Session tab highlight
+    document.querySelectorAll('#sessionTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.querySelector('#sessionTabs [data-session="' + currentSession + '"]');
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // Render header
+    const thead = document.getElementById('resultTableHead');
+    if (isQuali) {
+        thead.innerHTML = '<tr><th>Pos</th><th>Driver</th><th>Team</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Gap</th></tr>';
+    } else {
+        thead.innerHTML = '<tr><th>Pos</th><th>Driver</th><th>Team</th><th>Time</th><th>Gap</th><th>Status</th><th>Pts</th></tr>';
+    }
+
+    // Render body
+    const tbody = document.getElementById('resultTableBody');
+    tbody.innerHTML = data.map(d => {
+        const posClass = d.pos === 1 ? 'pos-1' : d.pos === 2 ? 'pos-2' : d.pos === 3 ? 'pos-3' : 'pos-other';
+        const teamColor = getTeamColor(d.team);
+        if (isQuali) {
+            const q3Class = d.pos <= 10 ? 'lap-time-best' : 'lap-time';
+            const gapDisplay = d.gap || '';
+            return `<tr>
+                <td><span class="pos-badge ${posClass}">${d.pos}</span></td>
+                <td><div class="driver-name-cell"><span class="team-dot" style="background:${teamColor}"></span><span style="font-weight:600;color:${teamColor}">${d.name}</span></div></td>
+                <td style="color:${teamColor};font-size:14px;font-weight:500">${d.team}</td>
+                <td class="lap-time">${d.q1}</td>
+                <td class="lap-time">${d.q2}</td>
+                <td class="${q3Class}" style="color:${F1_RED}">${d.q3}</td>
+                <td style="color:${F1_RED_DIM};font-size:13px">${gapDisplay}</td>
+            </tr>`;
+        } else {
+            let statusStyle = '';
+            if (d.status === 'Retired' || d.status === 'Did not start') statusStyle = 'color:#E10600';
+            else if (d.status === 'Lapped') statusStyle = 'color:#F5D442';
+            else statusStyle = 'color:#00D26A';
+            return `<tr>
+                <td><span class="pos-badge ${posClass}">${d.pos}</span></td>
+                <td><div class="driver-name-cell"><span class="team-dot" style="background:${teamColor}"></span><span style="font-weight:600;color:${teamColor}">${d.name}</span></div></td>
+                <td style="color:${teamColor};font-size:14px;font-weight:500">${d.team}</td>
+                <td class="lap-time">${d.time || '-'}</td>
+                <td style="color:var(--gray-3);font-size:15px">${d.gap || '-'}</td>
+                <td style="${statusStyle};font-size:13px;font-weight:600">${d.status || '-'}</td>
+                <td style="color:var(--gray-1);font-size:15px;font-weight:700">${d.points}</td>
+            </tr>`;
+        }
+    }).join('');
+}
+
+function renderStandings() {
+    const s = (appData && appData.standings) ? appData.standings : (FALLBACK_DATA ? FALLBACK_DATA.standings : null);
+    if (!s || !s.drivers || !s.drivers.length) return;
+    const { drivers, constructors } = s;
+
+    // Drivers
+    const maxPts = Number(drivers[0].points) || 1;
+    document.getElementById('driverStandingsCard').innerHTML = drivers.map(d => {
+        const pct = (Number(d.points) / maxPts * 100).toFixed(0);
+        const tc = getTeamColor(d.team);
+        const pc = d.pos <= 3 ? POS_COLORS[d.pos] : 'var(--gray-1)';
+        return `<div class="standing-row">
+            <span class="standing-pos" style="color:${pc}">${d.pos}</span>
+            <div class="standing-bar-wrapper">
+                <div class="standing-info">
+                    <div><span class="standing-driver" style="color:${tc}">${d.name}</span><span class="standing-team"> · ${d.team}${Number(d.wins)>0?` · ${d.wins}W`:''}</span></div>
+                    <span class="standing-points">${Number(d.points)}</span>
+                </div>
+                <div class="standing-bar"><div class="standing-bar-fill" style="width:${pct}%;background:${tc}"></div></div>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Constructors
+    const maxC = Number(constructors[0].points) || 1;
+    document.getElementById('constructorStandings').innerHTML = constructors.map(c => {
+        const pct = (Number(c.points) / maxC * 100).toFixed(0);
+        const tc = getTeamColor(c.name);
+        const pc = c.pos <= 3 ? POS_COLORS[c.pos] : 'var(--gray-1)';
+        const wd = Number(c.wins)>0?`${c.wins} wins`:'No wins yet';
+        return `<div class="standing-row">
+            <span class="standing-pos" style="color:${pc}">${c.pos}</span>
+            <div class="standing-bar-wrapper">
+                <div class="standing-info">
+                    <div><span class="standing-driver" style="color:${tc}">${c.name}</span><span class="standing-team"> · ${wd}</span></div>
+                    <span class="standing-points">${Number(c.points)}</span>
+                </div>
+                <div class="standing-bar"><div class="standing-bar-fill" style="width:${pct}%;background:${tc}"></div></div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderStarDrivers() {
+    document.getElementById('starDrivers').innerHTML = STAR_DRIVERS.slice(0,4).map(s => {
+        const tc = getTeamColor(s.team);
+        return `<div class="star-driver"><div class="star-info"><div class="star-name" style="color:${tc}">${s.name}<span class="star-team">${s.team}</span></div><div class="star-reason" style="color:var(--gray-3);font-size:13px;line-height:1.4">${s.reason}</div></div></div>`;
+    }).join('');
+}
+
+function getDriverPos(name) {
+    const drivers = (appData && appData.standings && appData.standings.drivers) || (FALLBACK_DATA && FALLBACK_DATA.standings && FALLBACK_DATA.standings.drivers) || [];
+    const d = drivers.find(x => x.name === name);
+    return d ? { pos: d.pos, points: d.points } : { pos: '—', points: '—' };
+}
+
+function setWdcCenter(name, prob) {
+    const info = getDriverPos(name);
+    const label = document.querySelector('.wdc-center-label');
+    const value = document.querySelector('.wdc-center-value');
+    const subtitle = document.querySelector('.wdc-center-subtitle');
+    if (label) label.textContent = `P${info.pos} \u00b7 ${info.points} pts`;
+    if (value) value.textContent = `${prob}%`;
+    if (subtitle) subtitle.textContent = name;
+}
+
+function setWdcLegendActive(idx) {
+    document.querySelectorAll('.wdc-legend-item[data-idx]').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
+    });
+}
+
+function renderWDCProb() {
+    const card = document.getElementById('wdcProbCard');
+    const probs = WDC_PROBS.map(w => ({...w, prob: Number(w.prob) || 0}));
+    const total = probs.reduce((s,w)=>s+w.prob,0);
+    let currentAngle = -90, svgPaths = '', legendHTML = '';
+    const R = 140, CX = 160, CY = 160;
+
+    const RC = 108, SW = 34, MAX_GAP = 2;
+    probs.forEach((w, i) => {
+        const tc = getTeamColor(w.team);
+        const angle = (w.prob/total)*360;
+        const gap = 1;
+        const sa = (currentAngle + gap) * Math.PI/180;
+        const ea = (currentAngle + angle - gap) * Math.PI/180;
+        const x1 = CX + RC*Math.cos(sa), y1 = CY + RC*Math.sin(sa);
+        const x2 = CX + RC*Math.cos(ea), y2 = CY + RC*Math.sin(ea);
+        const laf = angle - gap*2 > 180 ? 1 : 0;
+        svgPaths += `<path d="M${x1} ${y1} A${RC} ${RC} 0 ${laf} 1 ${x2} ${y2}" fill="none" stroke="${tc}" stroke-width="${SW}" stroke-linecap="butt" data-idx="${i}" style="cursor:pointer"><title>${w.name}: ${w.prob}%</title></path>`;
+        legendHTML += `<div class="wdc-legend-item" data-idx="${i}" style="--bar-color:${tc}"><div class="wdc-legend-info"><span class="wdc-legend-name" style="color:${tc}">${w.name}</span><div class="wdc-legend-reason">${w.reason || '—'}</div></div><span class="wdc-legend-prob">${w.prob}%</span></div>`;
+        currentAngle += angle;
+    });
+    const d0 = getDriverPos(WDC_PROBS[0].name);
+    card.innerHTML = `<div class="wdc-roulette-container"><div class="wdc-roulette-wrapper"><svg class="wdc-roulette" viewBox="0 0 320 320">${svgPaths}</svg><div class="wdc-roulette-center"><div class="wdc-center-label">P${d0.pos} \u00b7 ${d0.points} pts</div><div class="wdc-center-value">${WDC_PROBS[0].prob}%</div><div class="wdc-center-subtitle">${WDC_PROBS[0].name}</div></div></div><div class="wdc-legend">${legendHTML}</div></div>`;
+    card.querySelectorAll('path[data-idx]').forEach(p => {
+        p.addEventListener('click', () => {
+            const idx = parseInt(p.dataset.idx);
+            setWdcCenter(probs[idx].name, probs[idx].prob);
+            setWdcLegendActive(idx);
+        });
+    });
+    card.querySelectorAll('.wdc-legend-item[data-idx]').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => {
+            const idx = parseInt(el.dataset.idx);
+            setWdcCenter(probs[idx].name, probs[idx].prob);
+            setWdcLegendActive(idx);
+        });
+    });
+    setWdcLegendActive(0);
+    // Update meta
+    const meta = document.getElementById('wdcMeta');
+    if (meta && appData) meta.textContent = (appData.event.eventName || '') + ' · After Round ' + (appData.event.round || '');
+}
+
+// ====== LAP TIME CARD ======
+// Data source: appData.poleLap (from data.json). LAP_SAMPLE.pole is the
+// offline fallback (used when opened via file:// and data.json unreachable).
+//
+// Color rules (per spec):
+//   - GAP to P2  = (pole lap time − P2 Q3 lap time); always GREEN (pole's lead)
+//   - vs Last Year delta = (this year pole − last year pole):
+//         > 0  → RED   (this year slower than last year)
+//         <= 0 → GREEN (this year faster / equal)
+//   - Last-year driver code color = that driver's team color
+//   - Tyre: SOFT → red, MEDIUM → yellow, HARD → white
+const LAP_SAMPLE = {
+    pole: {
+        driver: 'Lando Norris', code: 'NOR', team: 'McLaren',
+        time: '1:17.207', gapToP2: 0.012,
+        tyre: 'SOFT', topSpeed: 327,
+        sectors: { s1: '27.364', s2: '27.621', s3: '22.222' },
+        lastYear: { year: 2025, driver: 'Charles Leclerc', code: 'LEC', team: 'Ferrari', time: '1:15.372', delta: 1.835 }
+    },
+    fastest: {
+        driver: 'Charles Leclerc', code: 'LEC', team: 'Ferrari',
+        time: '1:22.000',
+        tyre: 'SOFT', topSpeed: 320,
+        sectors: { s1: '28.807', s2: '29.754', s3: '23.439' },
+        lastYear: { year: 2025, driver: 'George Russell', code: 'RUS', team: 'Mercedes', time: '1:19.409', delta: 2.591 }
+    }
+};
+
+// Tyre → color (SOFT red, MEDIUM yellow, HARD white)
+function getTyreColor(tyre) {
+    const t = (tyre || '').toUpperCase();
+    if (t === 'SOFT') return '#E10600';
+    if (t === 'MEDIUM') return '#F5D442';
+    if (t === 'HARD') return '#FFFFFF';
+    return '#FFFFFF';
+}
+
+// Year-over-year delta color: slower (positive) = red, faster (negative) = green
+function getDeltaColor(seconds) {
+    return seconds > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+}
+
+// Bottom-right meta text for the LAP TIME card — derived from event data
+function getLapMeta() {
+    const ev = (appData && appData.event) ? appData.event : (FALLBACK_DATA ? FALLBACK_DATA.event : null);
+    return ev ? (ev.eventName || ev.country || 'F1') : 'F1';
+}
+
+// POLE card availability:
+//   Show the card UNLESS we are inside a GP weekend AND qualifying has not finished.
+//     - inWeekend : now is within [event.weekendStart, event.weekendEnd]
+//     - qualDone  : now >= event.qualifyingEnd
+//   Unavailable state (X icon + text, no emoji) shows only when (inWeekend && !qualDone).
+function isPoleCardAvailable() {
+    const ev = appData && appData.event;
+    if (!ev) return true; // no event info -> fail open (show card)
+    const now = Date.now();
+    let inWeekend = false;
+    let qualDone = true;
+
+    if (ev.weekendStart && ev.weekendEnd) {
+        const ws = new Date(ev.weekendStart).getTime();
+        const we = new Date(ev.weekendEnd).getTime();
+        inWeekend = now >= ws && now <= we;
+    }
+    if (ev.qualifyingEnd) {
+        qualDone = now >= new Date(ev.qualifyingEnd).getTime();
+    } else if (ev.sessions && ev.sessions.qualifying && ev.sessions.qualifying.date) {
+        // fallback: qualifying considered done 2h after its scheduled start
+        qualDone = now >= (new Date(ev.sessions.qualifying.date).getTime() + 2 * 3600 * 1000);
+    }
+    return !(inWeekend && !qualDone);
+}
+
+// FASTEST LAP card availability:
+//   The race is the final session of a GP weekend, so the fastest lap is only known
+//   once the race is complete. Show the blank state UNLESS we are inside a GP weekend
+//   AND the race has not finished.
+//     - inWeekend : now is within [event.weekendStart, event.weekendEnd]
+//     - raceDone  : now >= event.weekendEnd (race ends the weekend)
+function isFastestLapAvailable() {
+    const ev = appData && appData.event;
+    if (!ev) return true; // no event info -> fail open (show card)
+    const now = Date.now();
+    let inWeekend = false;
+    let raceDone = true;
+
+    if (ev.weekendStart && ev.weekendEnd) {
+        const ws = new Date(ev.weekendStart).getTime();
+        const we = new Date(ev.weekendEnd).getTime();
+        inWeekend = now >= ws && now <= we;
+    }
+    if (ev.weekendEnd) {
+        // race is the last session of the weekend; weekendEnd marks its completion
+        raceDone = now >= new Date(ev.weekendEnd).getTime();
+    } else if (ev.sessions && ev.sessions.race && ev.sessions.race.date) {
+        raceDone = now >= (new Date(ev.sessions.race.date).getTime() + 2 * 3600 * 1000);
+    }
+    return !(inWeekend && !raceDone);
+}
+
+// Shared blank-state markup for the LAP TIME cards (X icon + text, no emoji)
+function ltUnavailableMarkup(text) {
+    return '<div class="lt-unavailable">' +
+        '<svg class="lt-x-icon" viewBox="0 0 24 24">' +
+            '<line x1="6" y1="6" x2="18" y2="18"></line>' +
+            '<line x1="18" y1="6" x2="6" y2="18"></line>' +
+        '</svg>' +
+        '<div class="lt-unavailable-text">' + text + '</div>' +
+    '</div>';
+}
+
+function renderLapTimeCard() {
+    // POLE card — available unless inside a GP weekend with qualifying not finished
+    if (!isPoleCardAvailable()) {
+        document.getElementById('lapPole').innerHTML =
+            ltUnavailableMarkup('Unavailable until qualifying is complete');
+    } else {
+        renderPoleLapCard();
+    }
+
+    // FASTEST LAP card — available unless inside a GP weekend with the race not finished
+    if (!isFastestLapAvailable()) {
+        document.getElementById('lapFastest').innerHTML =
+            ltUnavailableMarkup('Unavailable until RACE is complete');
+    } else {
+        renderFastestLapCard();
+    }
+
+    document.getElementById('lapTimeMeta').textContent = getLapMeta('Qualifying');
+}
+
+function renderPoleLapCard() {
+    const pole = (appData && appData.poleLap) ? appData.poleLap : LAP_SAMPLE.pole;
+    const tc = getTeamColor(pole.team);
+
+    // GAP to P2 — pole's lead margin, always green (absolute value, since pole is always ahead)
+    const gapToP2 = (typeof pole.gapToP2 === 'number')
+        ? '+' + Math.abs(pole.gapToP2).toFixed(3) + 's'
+        : (pole.gap || '');
+    const gapColor = 'var(--accent-green)';
+
+    // Tyre color
+    const tyreColor = getTyreColor(pole.tyre);
+
+    // Last year block
+    const ly = pole.lastYear || null;
+    const lyCodeColor = ly ? getTeamColor(ly.team) : 'var(--gray-1)';
+    const lyDeltaNum = (ly && typeof ly.delta === 'number') ? ly.delta : null;
+    const lyDeltaColor = (lyDeltaNum !== null) ? getDeltaColor(lyDeltaNum) : 'var(--gray-3)';
+    const lyDeltaTxt = (lyDeltaNum !== null)
+        ? (lyDeltaNum > 0 ? '+' : '') + lyDeltaNum.toFixed(3) + 's'
+        : (ly ? (ly.delta || '') : '');
+
+    document.getElementById('lapPole').innerHTML =
+        '<div class="laptime-grid">' +
+            // LEFT column: driver head + stats grid + last year
+            '<div class="lt-left">' +
+                '<div class="lt-head">' +
+                    '<div class="lt-driver-info">' +
+                        '<div class="lt-driver-name">' + pole.driver + '</div>' +
+                        '<div class="lt-driver-team" style="color:' + tc + '">' + pole.team + '</div>' +
+                    '</div>' +
+                    '<div class="lt-time-wrap">' +
+                        '<div class="lt-time-label">Pole Lap</div>' +
+                        '<div class="lt-time">' + pole.time + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="lt-stats-grid">' +
+                    // GAP spans 2 rows on the left
+                    '<div class="lt-stat-box gap-box">' +
+                        '<div class="lt-stat-label">Gap</div>' +
+                        '<div class="lt-stat-sublabel">to P2</div>' +
+                        '<div class="lt-stat-value" style="color:' + gapColor + '">' + gapToP2 + '</div>' +
+                    '</div>' +
+                    '<div class="lt-stat-box">' +
+                        '<div class="lt-stat-label">Tyre</div>' +
+                        '<div class="lt-stat-value" style="color:' + tyreColor + '">' + pole.tyre + '</div>' +
+                    '</div>' +
+                    '<div class="lt-stat-box">' +
+                        '<div class="lt-stat-label">Top Speed</div>' +
+                        '<div class="lt-stat-value">' + pole.topSpeed + '<small> km/h</small></div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="lt-last-year">' +
+                    '<div class="lt-ly-left">' +
+                        '<div class="lt-ly-label">Last Year</div>' +
+                        '<div class="lt-ly-row">' +
+                            '<span class="lt-ly-driver" style="color:' + lyCodeColor + '">' + (ly ? ly.code : '') + '</span>' +
+                            '<span class="lt-ly-time">' + (ly ? ly.time : '') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="lt-ly-delta" style="color:' + lyDeltaColor + '">' + lyDeltaTxt + '</div>' +
+                '</div>' +
+            '</div>' +
+            // vertical divider
+            '<div class="lt-divider"></div>' +
+            // RIGHT column: SECTORS list
+            '<div class="lt-sectors-col">' +
+                '<div class="lt-sectors-title">SECTORS</div>' +
+                '<div class="lt-sector-row">' +
+                    '<span class="lt-sector-name">S1</span>' +
+                    '<span class="lt-sector-time">' + pole.sectors.s1 + '<small>s</small></span>' +
+                '</div>' +
+                '<div class="lt-sector-row">' +
+                    '<span class="lt-sector-name">S2</span>' +
+                    '<span class="lt-sector-time">' + pole.sectors.s2 + '<small>s</small></span>' +
+                '</div>' +
+                '<div class="lt-sector-row">' +
+                    '<span class="lt-sector-name">S3</span>' +
+                    '<span class="lt-sector-time">' + pole.sectors.s3 + '<small>s</small></span>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+}
+
+function renderFastestLapCard() {
+    const fastest = (appData && appData.fastestLap) ? appData.fastestLap : LAP_SAMPLE.fastest;
+    // Guard: incomplete sector data (e.g. race just finished and FastF1 hasn't populated sectors yet)
+    if (!fastest.sectors || fastest.sectors.s1 === undefined) {
+        document.getElementById('lapFastest').innerHTML = ltUnavailableMarkup('Fastest lap data unavailable');
+        return;
+    }
+    const tc = getTeamColor(fastest.team);
+    const tyreColor = getTyreColor(fastest.tyre);
+
+    // Last year block
+    const ly = fastest.lastYear || null;
+    const lyCodeColor = ly ? getTeamColor(ly.team) : 'var(--gray-1)';
+    const lyDeltaNum = (ly && typeof ly.delta === 'number') ? ly.delta : null;
+    const lyDeltaColor = (lyDeltaNum !== null) ? getDeltaColor(lyDeltaNum) : 'var(--gray-3)';
+    const lyDeltaTxt = (lyDeltaNum !== null)
+        ? (lyDeltaNum > 0 ? '+' : '') + lyDeltaNum.toFixed(3) + 's'
+        : (ly ? (ly.delta || '') : '');
+
+    document.getElementById('lapFastest').innerHTML =
+        '<div class="laptime-grid">' +
+            // LEFT column: driver head + 3-box stats row
+            '<div class="lt-left">' +
+                '<div class="lt-head">' +
+                    '<div class="lt-driver-info">' +
+                        '<div class="lt-driver-name">' + fastest.driver + '</div>' +
+                        '<div class="lt-driver-team" style="color:' + tc + '">' + fastest.team + '</div>' +
+                    '</div>' +
+                    '<div class="lt-time-wrap">' +
+                        '<div class="lt-time-label">Fastest Lap</div>' +
+                        '<div class="lt-time lt-time--fl">' + fastest.time + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="lt-stats-row-3col">' +
+                    '<div class="lt-stat-box">' +
+                        '<div class="lt-stat-label">Top Speed</div>' +
+                        '<div class="lt-stat-value">' + fastest.topSpeed + '<small> km/h</small></div>' +
+                    '</div>' +
+                    '<div class="lt-stat-box">' +
+                        '<div class="lt-stat-label">Tyre</div>' +
+                        '<div class="lt-stat-value" style="color:' + tyreColor + '">' + fastest.tyre + '</div>' +
+                    '</div>' +
+                    '<div class="lt-stat-box lt-ly-box">' +
+                        '<div class="lt-stat-label">Last Year</div>' +
+                        '<div class="lt-stat-value">' +
+                            '<span style="color:' + lyCodeColor + '">' + (ly ? ly.code : '') + '</span>' +
+                            '<span class="lt-fastest-delta" style="color:' + lyDeltaColor + '">' + lyDeltaTxt + '</span>' +
+                        '</div>' +
+                        '<div class="lt-stat-sub">' + (ly ? ly.time : '') + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+            // vertical divider
+            '<div class="lt-divider"></div>' +
+            // RIGHT column: SECTORS list
+            '<div class="lt-sectors-col">' +
+                '<div class="lt-sectors-title">SECTORS</div>' +
+                '<div class="lt-sector-row">' +
+                    '<span class="lt-sector-name">S1</span>' +
+                    '<span class="lt-sector-time">' + fastest.sectors.s1 + '<small>s</small></span>' +
+                '</div>' +
+                '<div class="lt-sector-row">' +
+                    '<span class="lt-sector-name">S2</span>' +
+                    '<span class="lt-sector-time">' + fastest.sectors.s2 + '<small>s</small></span>' +
+                '</div>' +
+                '<div class="lt-sector-row">' +
+                    '<span class="lt-sector-name">S3</span>' +
+                    '<span class="lt-sector-time">' + fastest.sectors.s3 + '<small>s</small></span>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+}
+
+function switchLapTab(tab) {
+    document.querySelectorAll('#lapTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.querySelector('#lapTabs [data-lap="' + tab + '"]');
+    if (btn) btn.classList.add('active');
+    document.getElementById('lapPole').style.display = tab === 'pole' ? '' : 'none';
+    document.getElementById('lapFastest').style.display = tab === 'fastest' ? '' : 'none';
+    document.getElementById('lapTimeMeta').textContent =
+        tab === 'pole' ? getLapMeta('Qualifying') : getLapMeta('Race');
+}
+
+function renderAll() {
+    updateHeroAndTimeline();
+    renderResults();
+    renderStandings();
+    renderLapTimeCard();
+    // Only render prediction with defaults if no AI data yet
+    if (!window._aiStars) renderStarDriversPlaceholder();
+    if (!window._aiWdc) renderWDCProbPlaceholder();
+    renderWdcFeasibility();
+    applyAIPlaceholderFix();
+    updateAllMeta();
+}
+
+function updateAllMeta() {
+    const rnd = appData ? 'After Round ' + (appData.event.round || '11') : '';
+    const evt = appData ? (appData.event.eventName || '') : '';
+    const nextEv = window._currentEvent;
+    const nextName = nextEv ? nextEv.eventName + ' · AI Prediction' : evt + ' · AI Prediction';
+
+    // Results meta
+    const rm = document.getElementById('resultMeta');
+    if (rm) rm.textContent = evt;
+    // Standings metas
+    document.querySelectorAll('#tab-drivers .meta-bottom, #tab-constructors .meta-bottom').forEach(m => {
+        m.textContent = rnd + ' · ' + evt;
+    });
+    // Race prediction meta
+    const rpm = document.querySelector('#tab-race .meta-bottom');
+    if (rpm) rpm.textContent = nextName;
+    // WDC meta
+    const wm = document.getElementById('wdcMeta');
+    if (wm) wm.textContent = evt + ' · ' + rnd;
+}
+
+// ====== HERO + TIMELINE ======
+// Helpers -----------------------------------------------------------------
+function backfillFromSeason(ev) {
+    if (!ev) return ev;
+    if (ev.officialName) return ev;
+    const list = (typeof SEASON_2026 !== 'undefined') ? SEASON_2026 : null;
+    const s = list && list.find(x => String(x.round) === String(ev.round));
+    if (s) return Object.assign({}, ev, {
+        officialName: ev.officialName || s.officialName,
+        circuit: ev.circuit || s.circuit,
+        country: ev.country || s.country,
+        location: ev.location || s.location,
+        eventName: ev.eventName || s.eventName
+    });
+    return ev;
+}
+function fmtHeroDate(iso) {
+    return fmtDay8(iso);
+}
+function fmtHeroTime(iso) {
+    return fmtTime8(iso);
+}
+function resolveHeroMode(he) {
+    const now = Date.now();
+    const fp1 = he.sessions && he.sessions.fp1;
+    const race = he.sessions && he.sessions.race;
+    const start = fp1 ? parseDate8(fp1.date).getTime()
+                      : (race ? parseDate8(race.date).getTime() : parseDate8(he.date).getTime());
+    const end = race ? parseDate8(race.date).getTime() + 3 * 3600 * 1000 : start + 3 * 3600 * 1000;
+    if (now > end) return 'completed';
+    if (now >= start) return 'live';
+    return 'upcoming';
+}
+
+function buildHeroDateSwap(he) {
+    const container = document.getElementById('heroDateSwap');
+    if (!container) return;
+    const sessions = he.sessions || {};
+    const keys = Object.keys(sessions);
+    let items = keys.map(k => {
+        const s = sessions[k];
+        return {
+            day: fmtHeroDate(s.date) || s.day,
+            label: s.label || s.name || k,
+            time: s.date ? fmtHeroTime(s.date) : ''
+        };
+    });
+    if (items.length === 0) {
+        items = [{ day: fmtHeroDate(he.date), label: '', time: '' }];
+    }
+    const N = items.length;
+    const T = 4; // seconds per session
+    if (N >= 2) injectHeroSwapKeyframes(N);
+
+    let widest = items[0];
+    items.forEach(it => { if (it.label.length > widest.label.length) widest = it; });
+    const slotHtml = (it) => `<div class="hero-date">${it.day}</div>` +
+        `<div class="hero-date-meta"><div class="hero-dow">${it.label}</div><div class="hero-time">${it.time}</div></div>`;
+
+    if (N >= 2) {
+        const sizer = `<span class="hero-date-sizer" aria-hidden="true">${slotHtml(widest)}</span>`;
+        const layers = items.map((it, i) =>
+            `<div class="ds" style="animation-duration:${N * T}s; animation-delay:${i * T}s">${slotHtml(it)}</div>`
+        ).join('');
+        container.innerHTML = sizer + layers;
+    } else {
+        container.innerHTML = `<div class="ds static">${slotHtml(items[0])}</div>`;
+    }
+}
+
+function injectHeroSwapKeyframes(N) {
+    const id = 'heroSwapKeyframes';
+    let style = document.getElementById(id);
+    if (!style) {
+        style = document.createElement('style');
+        style.id = id;
+        document.head.appendChild(style);
+    }
+    const slot = 100 / N;
+    const inEnd = (slot * 0.28).toFixed(2);
+    const outStart = (slot * 0.72).toFixed(2);
+    const outEnd = slot.toFixed(2);
+    style.textContent = `@keyframes heroSwap {
+        0% { opacity: 0; transform: translateY(50%); filter: blur(6px); }
+        ${inEnd}% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        ${outStart}% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        ${outEnd}% { opacity: 0; transform: translateY(-50%); filter: blur(6px); }
+        100% { opacity: 0; transform: translateY(-50%); filter: blur(6px); }
+    }`;
+}
+
+function updateHeroAndTimeline() {
+    if (!appData) return;
+    // Show the CURRENT weekend if we're inside it, otherwise the NEXT race.
+    // Prefer appData (has full sessions) when its round matches the auto-detected target.
+    const cur = window._currentEvent;
+    let he = null;
+    if (cur) {
+        const tr = String(cur.round);
+        if (appData.event && String(appData.event.round) === tr) he = appData.event;
+        else if (appData.nextEvent && String(appData.nextEvent.round) === tr) he = appData.nextEvent;
+    }
+    if (!he) he = backfillFromSeason(appData.nextEvent || appData.event);
+    if (!he) return;
+    const mode = resolveHeroMode(he);
+
+    const titleEl = document.getElementById('heroTitle');
+    const subEl   = document.getElementById('heroSubtitle');
+    const dotEl   = document.getElementById('sessionDot');
+    const txtEl   = document.getElementById('sessionText');
+    const roundBig = document.getElementById('heroRoundBig');
+    const circA   = document.getElementById('heroCircuitA');
+    const circB   = document.getElementById('heroCircuitB');
+    const circSz  = document.getElementById('heroCircuitSizer');
+
+    // GP name: big = short event name (single line), small = full official name
+    if (titleEl) titleEl.textContent = (he.eventName || '').toUpperCase();
+    if (subEl)   subEl.textContent = he.officialName || ((he.eventName || '').toUpperCase() + ' · Round ' + (he.round || ''));
+
+    // Round x / total
+    const total = (typeof SEASON_2026 !== 'undefined' && SEASON_2026.length) ? SEASON_2026.length : 22;
+    if (roundBig) roundBig.textContent = he.round || '';
+    const roundSub = document.querySelector('.hero-round-sub');
+    if (roundSub) roundSub.textContent = '/' + total;
+
+    // Date row — rotating carousel across all weekend sessions
+    const fp1 = he.sessions && he.sessions.fp1;
+    buildHeroDateSwap(he);
+
+    // Circuit crossfade (Zandvoort ⇄ Netherlands)
+    const cA = he.circuit || he.location || '';
+    const cB = he.country || '';
+    if (circA) circA.textContent = cA;
+    if (circB) circB.textContent = cB;
+    if (circSz) circSz.textContent = (cA.length >= cB.length) ? cA : cB;
+
+    // Session status
+    if (dotEl && txtEl) {
+        if (mode === 'completed') {
+            dotEl.style.background = '#00D26A'; dotEl.style.boxShadow = '0 0 8px #00D26A'; dotEl.style.animation = 'none';
+            txtEl.textContent = 'RACE COMPLETED';
+        } else {
+            dotEl.style.background = '#F5D442'; dotEl.style.boxShadow = '0 0 8px #F5D442'; dotEl.style.animation = 'blink 2s ease-in-out infinite';
+            txtEl.textContent = (mode === 'live') ? 'RACE WEEKEND' : 'UPCOMING RACE';
+        }
+    }
+
+    // Countdown targets FP1 (our convention); fall back to race
+    const target = fp1 ? parseDate8(fp1.date) : new Date((he.date || '2026-08-23') + 'T21:00:00+08:00');
+    updateCountdownTo(target);
+    generateTimeline(he);
+}
+
+// Session durations (minutes) used to detect the live/current session
+const SESSION_DURATION_MIN = { fp1: 60, fp2: 60, fp3: 60, sq: 40, sprint: 40, qualifying: 60, race: 120 };
+function timelineState(nowMs, startMs, key) {
+    if (nowMs < startMs) return 'upcoming';
+    const dur = (SESSION_DURATION_MIN[key] || 60) * 60 * 1000;
+    return nowMs <= startMs + dur ? 'current' : 'done';
+}
+
+function generateTimeline(ev) {
+    const tl = document.getElementById('timelineList');
+    if (!ev) { tl.innerHTML = ''; return; }
+    const now = new Date();
+    const sessions = ev.sessions || {};
+    const keys = Object.keys(sessions);
+    if (keys.length === 0) {
+        // Generate from event date (UTC+8 based)
+        const base = parseDate8(ev.date).getTime();
+        const off = (days) => base + days * 86400000;
+        const sprint = ev.format === 'sprint_qualifying';
+        const items = sprint ? [
+            {label:'FP1',day:off(-2),date:off(-2)},
+            {label:'SQ',day:off(-2)},
+            {label:'Sprint',day:off(-1)},
+            {label:'Qualifying',day:off(-1)},
+            {label:'Race',day:off(0)}
+        ] : [
+            {label:'FP1',day:off(-2)},
+            {label:'FP2',day:off(-2)},
+            {label:'FP3',day:off(-1)},
+            {label:'Qualifying',day:off(-1)},
+            {label:'Race',day:off(0)}
+        ];
+        tl.innerHTML = items.map(s => {
+            const sd = new Date(s.day);
+            const state = timelineState(now.getTime(), sd.getTime(), s.label.toLowerCase());
+            const dayStr = fmtDay8(sd);
+            return `<div class="timeline-item ${state}"><div class="timeline-label">${s.label}</div><div class="timeline-date">${dayStr}</div></div>`;
+        }).join('');
+        return;
+    }
+    const items = keys.map(k => ({ key: k, ...sessions[k] }));
+    tl.innerHTML = items.map(s => {
+        const sd = parseDate8(s.date);
+        const state = timelineState(now.getTime(), sd.getTime(), s.key || (s.label || s.name).toLowerCase());
+        const day = fmtDay8(s.date) || s.day;
+        return `<div class="timeline-item ${state}"><div class="timeline-label">${s.label||s.name}</div><div class="timeline-date">${day}</div></div>`;
+    }).join('');
+}
+
+function updateCountdownTo(targetDate) {
+    window._countdownTarget = targetDate.getTime();
+    const diff = targetDate - new Date();
+    const label = diff > 0 ? 'Time to Lights Out' : 'Race Starting Soon';
+    const lbl = document.getElementById('cdLabel');
+    if (lbl) lbl.textContent = label;
+}
+
+// ====== TAB SWITCH ======
+function switchTab(tabId) {
+    const target = document.getElementById('tab-' + tabId);
+    if (!target) return;
+    const section = target.closest('section');
+    section.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    section.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    const clickedBtn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('.tab-btn') : null;
+    if (clickedBtn) clickedBtn.classList.add('active');
+    target.classList.add('active');
+}
+
+// ====== COUNTDOWN ======
+function updateCountdownDisplay() {
+    const target = window._countdownTarget || new Date('2026-08-23T21:00:00+08:00').getTime();
+    const diff = target - Date.now();
+    if (diff <= 0) { ['h','m','s'].forEach(u => { const e = document.getElementById('cd-'+u); if(e) e.textContent = '00'; const f = document.getElementById('fcd-'+u); if(f) f.textContent = '00'; }); const c = document.getElementById('cd'); if(c) c.textContent = '00:00:00'; return; }
+    const h = String(Math.floor(diff/3600000)).padStart(2,'0');
+    const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+    const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    const cdEl = document.getElementById('cd');
+    if (cdEl) cdEl.textContent = h + ':' + m + ':' + s;
+    document.getElementById('fcd-h').textContent = h;
+    document.getElementById('fcd-m').textContent = m;
+    document.getElementById('fcd-s').textContent = s;
+}
+
+function initFloatingCountdown() {
+    const heroCard = document.querySelector('.hero-stage');
+    const floating = document.querySelector('.floating-countdown');
+    if (!heroCard || !floating) return;
+    const observer = new IntersectionObserver(([entry]) => {
+        floating.classList.toggle('visible', !entry.isIntersecting);
+    }, { threshold: 0 });
+    observer.observe(heroCard);
+
+    // Hover: fill round / GP name from current hero data (always in sync)
+    const roundLabel = document.getElementById('fcdRoundLabel');
+    const gpEl = document.getElementById('fcdGp');
+    if (roundLabel && gpEl) {
+        floating.addEventListener('mouseenter', () => {
+            const roundBig = document.getElementById('heroRoundBig');
+            const roundSub = document.querySelector('.hero-round-sub');
+            const titleEl = document.getElementById('heroTitle');
+            if (roundBig) roundLabel.textContent = 'ROUND ' + (roundBig.textContent || '--') + (roundSub ? roundSub.textContent : '');
+            if (titleEl) gpEl.textContent = titleEl.textContent;
+        });
+    }
+}
+
+// ====== SCROLL ======
+function initScrollAnimations() {
+    const obs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+}
+
+// ====== AI PREDICTION ======
+function saveApiKey() {
+    const p = document.getElementById('aiProvider').value;
+    const k = document.getElementById('aiKey').value.trim();
+    const m = document.getElementById('aiModel').value.trim();
+    if (!k) { document.getElementById('apiHint').textContent = 'Enter a key'; return; }
+    localStorage.setItem('f1_ai_provider', p);
+    localStorage.setItem('f1_ai_key', k);
+    if (m) localStorage.setItem('f1_ai_model', m); else localStorage.removeItem('f1_ai_model');
+    document.getElementById('apiHint').textContent = 'Saved!';
+    document.getElementById('apiStatus').textContent = p + ' ready'; document.getElementById('apiStatus').className = 'api-status success';
+}
+
+function toggleApiSettings() {
+    const p = document.getElementById('apiSettings');
+    p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+
+function loadApiSettings() {
+    const p = localStorage.getItem('f1_ai_provider');
+    const k = localStorage.getItem('f1_ai_key');
+    const m = localStorage.getItem('f1_ai_model');
+    if (p && k) {
+        document.getElementById('aiProvider').value = p;
+        document.getElementById('aiKey').value = k;
+        if (m) document.getElementById('aiModel').value = m;
+        document.getElementById('apiStatus').textContent = p + ' ready'; document.getElementById('apiStatus').className = 'api-status success';
+    }
+}
+
+async function callAI(prompt) {
+    const key = localStorage.getItem('f1_ai_key');
+    const provider = localStorage.getItem('f1_ai_provider') || 'deepseek';
+    if (!key) throw new Error('Set API key first');
+    const url = provider === 'deepseek' ? 'https://api.deepseek.com/v1/chat/completions'
+              : provider === 'kimi' ? 'https://api.moonshot.cn/v1/chat/completions'
+              : 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    const defaultModel = provider === 'deepseek' ? 'deepseek-chat'
+                : provider === 'kimi' ? 'moonshot-v1-8k'
+                : 'glm-4-flash';
+    const model = localStorage.getItem('f1_ai_model') || defaultModel;
+    const resp = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
+        body: JSON.stringify({model,messages:[{role:'system',content:'You are an F1 analyst. Reply with ONLY a single valid JSON object. No code fences, no backticks, no markdown, no explanations, no commentary — just the raw JSON.'},{role:'user',content:prompt}],temperature:0.3,max_tokens:4000})
+    });
+    const result = await resp.json();
+    if (result.error) throw new Error(result.error.message || JSON.stringify(result.error));
+    let c = result.choices[0].message.content.trim();
+    // Strip code fences of any form: ```json / ``` / etc.
+    c = c.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/, '');
+    // If model wrapped JSON with explanatory text, extract the JSON object only
+    const jsonMatch = c.match(/\{[\s\S]*\}/);
+    if (jsonMatch) c = jsonMatch[0];
+    try {
+        return JSON.parse(c);
+    } catch (e) {
+        throw new Error('AI returned invalid JSON (' + c.length + ' chars): ' + c.slice(0, 160));
+    }
+}
+
+function makeContext() {
+    const dr = appData ? appData.event.round : '11';
+    const cr = window._currentEvent ? window._currentEvent.round : '12';
+    const over = dr !== cr;
+    return over
+        ? `Round ${dr} (${appData?.event?.eventName||''}) is COMPLETED. Predict Round ${cr} (${window._currentEvent?.eventName||''}).`
+        : `Round ${cr} is the NEXT upcoming race.`;
+}
+
+async function runRacePredict() {
+    if (!hasQualifyingForPrediction()) return;
+    const btn = document.getElementById('raceAiBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'Thinking...'; btn.disabled = true; btn.classList.add('loading');
+    try {
+        const info = {
+            stand: ((appData&&appData.standings&&appData.standings.drivers)?appData.standings.drivers.slice(0,10):[]),
+            quali: ((appData&&appData.qualifying)?appData.qualifying.slice(0,10).map(q=>({pos:q.pos,name:q.name,team:q.team,q3:q.q3})):[]),
+            track: window._currentEvent ? (window._currentEvent.circuit||'')+', '+(window._currentEvent.country||'')+' ('+(window._currentEvent.format||'')+')' : ''
+        };
+        const prompt = `F1 2026 data:\n${makeContext()}\n\nStandings: ${JSON.stringify(info.stand)}\nQualifying (R${appData?.event?.round||''}): ${JSON.stringify(info.quali)}\nNext Track: ${info.track}\n\nReturn ONLY JSON:\n{"podium":[{"name":"","team":"","prob":0},...3 drivers],"stars":[{"name":"","team":"","reason":"Detailed Chinese reason (20-30 chars)"},...exactly 4 drivers]}`;
+
+        const p = await callAI(prompt);
+        window._aiPodium = p.podium || [];
+        window._aiStars = p.stars || [];
+        applyRacePrediction();
+    } catch(e) {
+        alert('AI error: ' + e.message);
+    } finally {
+        btn.textContent = orig; btn.disabled = false; btn.classList.remove('loading');
+    }
+}
+
+async function runWDCPredict() {
+    const btn = document.querySelector('.wdc-ai-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Thinking...'; btn.disabled = true; btn.classList.add('loading');
+    try {
+        const info = {
+            stand: ((appData&&appData.standings&&appData.standings.drivers)?appData.standings.drivers.slice(0,10):[]),
+            track: window._currentEvent ? window._currentEvent.eventName+' R'+window._currentEvent.round : ''
+        };
+        const prompt = `F1 2026 data:\n${makeContext()}\n\nStandings: ${JSON.stringify(info.stand)}\nRemaining races after Round ${appData?.event?.round||'11'}: ${22-parseInt(appData?.event?.round||'11')}\n\nReturn ONLY JSON:\n{"wdc":[{"name":"","team":"","prob":0,"reason":"Chinese reason (20-35 Chinese characters, eg. 赛季6胜积分领先且剩余赛道均为优势赛道)"},...exactly 5 drivers]}\n\nIMPORTANT: prob MUST be an integer 1-100 (NOT 0-1 decimal). reason MUST be between 20 and 35 Chinese characters.`;
+
+        const p = await callAI(prompt);
+        window._aiWdc = p.wdc || [];
+        applyWDCPrediction();
+    } catch(e) {
+        alert('AI error: ' + e.message);
+    } finally {
+        btn.textContent = orig; btn.disabled = false; btn.classList.remove('loading');
+    }
+}
+
+function applyRacePrediction() {
+    // Podium
+    const pba = document.querySelector('.podium-blocks-area');
+    if (pba) {
+        const bl = pba.querySelector('.podium-blocks');
+        if (bl) bl.style.display = '';
+        const ph = pba.querySelector('.empty-podium');
+        if (ph) ph.remove();
+    }
+    if (window._aiPodium && window._aiPodium.length >= 3) {
+        document.querySelectorAll('.podium-slot').forEach((slot,i)=>{
+            const p = window._aiPodium[i];
+            if (p) {
+                const tc = getTeamColor(p.team);
+                slot.querySelector('.podium-driver-name-top').textContent = p.name;
+                slot.querySelector('.podium-driver-name-top').style.color = tc;
+                slot.querySelector('.podium-prob-top').textContent = p.prob + '%';
+            }
+        });
+    }
+    // Stars
+    if (window._aiStars && window._aiStars.length >= 3) {
+        document.getElementById('starDrivers').innerHTML = window._aiStars.slice(0,4).map(s => {
+            const tc = getTeamColor(s.team);
+            return `<div class="star-driver"><div class="star-info"><div class="star-name" style="color:${tc}">${s.name}<span class="star-team">${s.team}</span></div><div class="star-reason" style="color:var(--gray-3);font-size:13px;line-height:1.4">${s.reason}</div></div></div>`;
+        }).join('');
+    }
+}
+
+function applyWDCPrediction() {
+    if (!window._aiWdc || window._aiWdc.length < 5) return;
+    const card = document.getElementById('wdcProbCard');
+    const ps = window._aiWdc.map(w=>({...w,prob:Number(w.prob)||0}));
+    const total = ps.reduce((s,w)=>s+w.prob,0)||100;
+    let ca=-90,svg='',legend='';
+    const CX=160,CY=160,RC=108,SW=34,MAX_GAP=2;
+    ps.forEach((w,i)=>{
+        const tc=getTeamColor(w.team), ang=w.prob/total*360;
+        const gap=1;
+        const sa=(ca+gap)*Math.PI/180, ea=(ca+ang-gap)*Math.PI/180;
+        const x1=CX+RC*Math.cos(sa), y1=CY+RC*Math.sin(sa);
+        const x2=CX+RC*Math.cos(ea), y2=CY+RC*Math.sin(ea);
+        const laf=ang-gap*2>180?1:0;
+        svg+=`<path d="M${x1} ${y1} A${RC} ${RC} 0 ${laf} 1 ${x2} ${y2}" fill="none" stroke="${tc}" stroke-width="${SW}" stroke-linecap="butt" data-idx="${i}" style="cursor:pointer"><title>${w.name}: ${w.prob}%</title></path>`;
+        legend+=`<div class="wdc-legend-item" data-idx="${i}" style="--bar-color:${tc}"><div class="wdc-legend-info"><span class="wdc-legend-name" style="color:${tc}">${w.name}</span><div class="wdc-legend-reason">${w.reason || '—'}</div></div><span class="wdc-legend-prob">${w.prob}%</span></div>`;
+        ca+=ang;
+    });
+    const d0 = getDriverPos(ps[0].name);
+    document.getElementById('wdcProbCard').innerHTML=`<div class="wdc-roulette-wrapper"><svg class="wdc-roulette" viewBox="0 0 320 320">${svg}</svg><div class="wdc-roulette-center"><div class="wdc-center-label">P${d0.pos} \u00b7 ${d0.points} pts</div><div class="wdc-center-value">${ps[0].prob}%</div><div class="wdc-center-subtitle">${ps[0].name}</div></div></div>`;
+    document.getElementById('wdcLegend').innerHTML = legend;
+    card.querySelectorAll('path[data-idx]').forEach(p => {
+        p.addEventListener('click', () => {
+            const idx = parseInt(p.dataset.idx);
+            setWdcCenter(ps[idx].name, ps[idx].prob);
+            setWdcLegendActive(idx);
+        });
+    });
+    document.getElementById('wdcLegend').querySelectorAll('.wdc-legend-item[data-idx]').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => {
+            const idx = parseInt(el.dataset.idx);
+            setWdcCenter(ps[idx].name, ps[idx].prob);
+            setWdcLegendActive(idx);
+        });
+    });
+    setWdcLegendActive(0);
+}
+
+// ====== PLACEHOLDERS ======
+function hasQualifyingForPrediction() {
+    if (!appData) return false;
+    const curEv = findCurrentEvent();
+    const dataRound = String(appData.event.round || '');
+    const curRound = curEv.round;
+    // Inside this GP weekend OR waiting for next GP — match data round to current event round
+    return dataRound === curRound && appData.qualifying && appData.qualifying.length > 0;
+}
+
+function emptyBlock(icon, text) {
+    const isLock = icon === 'lock';
+    const iconSvg = isLock
+        ? '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.3"><circle cx="12" cy="12" r="10"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        : `<div style="font-size:40px;opacity:0.25">${icon}</div>`;
+    return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;color:var(--gray-4);gap:12px">${iconSvg}<div style="font-size:14px;text-align:center;line-height:1.7">${text}</div></div>`;
+}
+
+function applyAIPlaceholderFix() {
+    const hasQuali = hasQualifyingForPrediction();
+    // Race AI button visibility
+    const raceBtn = document.getElementById('raceAiBtn');
+    if (raceBtn) raceBtn.style.display = hasQuali ? '' : 'none';
+
+    const pba = document.querySelector('.podium-blocks-area');
+    if (pba) {
+        const blocks = pba.querySelector('.podium-blocks');
+        if (blocks) blocks.style.display = 'none';
+        let ph = pba.querySelector('.empty-podium');
+        if (!ph) { ph = document.createElement('div'); ph.className = 'empty-podium'; pba.appendChild(ph); }
+        ph.innerHTML = hasQuali
+            ? emptyBlock('P', 'Click <b>AI Predict</b> to generate<br>podium predictions')
+            : emptyBlock('lock', 'Podium prediction unlocks<br>after Qualifying is complete');
+    }
+    if (!window._aiStars) {
+        const cs = document.getElementById('starDrivers');
+        if (cs) cs.innerHTML = hasQuali
+            ? emptyBlock('&#9733;', 'Click <b>AI Predict</b> to discover<br>stars to watch')
+            : emptyBlock('lock', 'Stars to Watch unlocks<br>after Qualifying is complete');
+    }
+}
+
+function renderStarDriversPlaceholder() {
+    document.getElementById('starDrivers').innerHTML = emptyBlock('&#9733;', 'Click <b>AI Predict</b> to discover<br>stars to watch');
+}
+
+function renderWDCProbPlaceholder() {
+    const card = document.getElementById('wdcProbCard');
+    document.getElementById('wdcProbCard').innerHTML = `<div class="wdc-roulette-wrapper"><svg class="wdc-roulette" viewBox="0 0 320 320"><circle cx="160" cy="160" r="139" fill="none" stroke="var(--gray-6)" stroke-width="3" stroke-dasharray="8 6"/></svg><div class="wdc-roulette-center"></div></div>`;
+    document.getElementById('wdcLegend').innerHTML = `<div style="padding:20px 0;color:var(--gray-4);text-align:center;font-size:14px">Click <b>AI Predict</b> to analyze<br>championship probability</div>`;
+}
+
+function renderWdcFeasibility() {
+    const card = document.getElementById('wdcFeasibilityCard');
+    if (!card) return;
+    const wf = appData && appData.wdcFeasibility;
+    const standings = (appData && appData.standings && appData.standings.drivers) || [];
+    const top5 = standings.slice(0, 5);
+    if (!top5.length) { card.style.display = 'none'; return; }
+
+    function getCode(name) {
+        if (!name) return '??';
+        const parts = name.toUpperCase().split(' ');
+        if (parts.length >= 2) return parts[parts.length-1].slice(0,3);
+        return name.slice(0,3);
+    }
+
+    const round = parseInt((appData && appData.event && appData.event.round) || '11', 10);
+    const ptsRemain = (wf && wf.maxRemainingPoints) ? wf.maxRemainingPoints : (22 - round) * 26;
+    const leaderPts = top5[0].points;
+
+    const caps = top5.map((d, i) => {
+        const tc = getTeamColor(d.team);
+        const isLead = i === 0;
+        const gapTxt = isLead ? d.points : '−' + (leaderPts - d.points);
+        const capStyle = isLead ? `border-color:${tc}66;background:${tc}33` : `border-color:${tc}66`;
+        const codeStyle = `color:${tc}`;
+        const gapStyle = isLead ? 'color:rgba(255,255,255,0.88)' : '';
+        return `<span class="wdc-capsule" style="${capStyle}"><span class="cap-code" style="${codeStyle}">${getCode(d.name)}</span><span class="cap-gap" style="${gapStyle}">${gapTxt}</span></span>`;
+    }).join('');
+
+    card.innerHTML = `
+        <div class="feas-header"><span class="feas-pts">${ptsRemain}</span><span class="feas-label">pts remain</span></div>
+        <div class="wdc-capsules">${caps}</div>`;
+    card.style.display = '';
+}
+
+// ====== INIT ======
+// ====== HERO 3D TILT ======
+function initHeroTilt() {
+    const stage = document.getElementById('heroStage');
+    if (!stage || window.matchMedia('(hover: none)').matches) return;
+    const MAX_TILT = 7;
+    stage.addEventListener('mouseenter', () => stage.classList.add('tilting'));
+    stage.addEventListener('mousemove', e => {
+        const r = stage.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        stage.style.transform = `rotateY(${px * MAX_TILT}deg) rotateX(${py * -MAX_TILT}deg) scale(1.02)`;
+    });
+    stage.addEventListener('mouseleave', () => {
+        stage.classList.remove('tilting');
+        stage.style.transform = '';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+    loadApiSettings();
+    setInterval(updateCountdownDisplay, 1000);
+    initScrollAnimations();
+    initFloatingCountdown();
+    initHeroTilt();
+});
+</script>
+</body>
+</html>
