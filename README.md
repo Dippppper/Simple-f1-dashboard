@@ -1,6 +1,6 @@
 # F1 Dashboard
 
-一个基于 [FastF1](https://github.com/theOehrly/Fast-F1) 数据的本地 F1 赛季仪表盘，单页 HTML + 轻量 Python 后端，数据全部来自官方计时数据。
+一个基于 [FastF1](https://github.com/theOehrly/Fast-F1) 数据的本地 F1 赛季仪表盘
 
 ## 功能
 
@@ -9,10 +9,10 @@
 - **排位赛 / 正赛成绩**：Q1–Q3 分段成绩、与杆位差距、正赛完赛时间与差距
 - **杆位圈 / 最快圈卡片**：三段计时、尾速、与去年同站对比
 - **WDC 理论夺冠分析**：剩余赛程最高可得积分、谁仍有理论夺冠可能
-- **AI 预测**（可选）：输入自己的 DeepSeek 或 Kimi API Key，生成登台 / 总冠军 / 看点车手预测
+- **AI 预测**：输入自己的 DeepSeek 或 Kimi API Key，生成登台 / 总冠军 / 看点车手预测
 - **遥测分析脚本**（`analysis/`）：赛道速度图、档位图、圈速分布、Q3 对比等图片生成
 
-## 快速开始
+## 开始
 
 ```bash
 # 1. 安装依赖
