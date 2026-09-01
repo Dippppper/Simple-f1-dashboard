@@ -215,17 +215,33 @@
             inset: 0;
             border-radius: inherit;
             background:
-              radial-gradient(ellipse 50% 40% at 25% 15%, rgba(255,255,255,0.18), transparent 65%),
-              radial-gradient(ellipse 120% 80% at 80% 90%, transparent 30%, rgba(255,255,255,0.15) 31%, transparent 32%),
-              radial-gradient(ellipse 110% 70% at 80% 90%, transparent 40%, rgba(255,255,255,0.13) 41%, transparent 42%),
-              radial-gradient(ellipse 100% 60% at 80% 90%, transparent 50%, rgba(255,255,255,0.11) 51%, transparent 52%),
-              radial-gradient(ellipse 90% 50% at 80% 90%, transparent 60%, rgba(255,255,255,0.09) 61%, transparent 62%),
-              radial-gradient(ellipse 80% 40% at 80% 90%, transparent 70%, rgba(255,255,255,0.13) 71%, transparent 72%);
+              radial-gradient(ellipse 50% 40% at 25% 15%, rgba(255,255,255,0.18), transparent 65%);
             pointer-events: none;
             opacity: 0.8;
             transition: opacity 0.5s ease;
         }
         .hero-stage:hover::before { opacity: 1; }
+        /* Topographic contour lines — SVG paths in the bottom-right corner */
+        .hero-contour {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 86%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.9;
+            transition: opacity 0.5s ease;
+        }
+        .hero-contour path {
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 1.3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vector-effect: non-scaling-stroke;
+        }
+        .hero-stage:hover .hero-contour { opacity: 1; }
         /* Parallax depth layers — only active on hover to keep resting-state alignment */
         .hero-content > * { transition: transform 0.35s ease; }
         .hero-stage:hover .hero-content .hero-round { transform: translateZ(42px); }
@@ -1442,6 +1458,13 @@
 
     <!-- RIGHT: editorial red stage with data block -->
     <div class="hero-stage" id="heroStage">
+      <svg class="hero-contour" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" style="stroke-opacity:.20"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(14 12.6) scale(.93)" style="stroke-opacity:.16"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(28 25.2) scale(.86)" style="stroke-opacity:.12"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(42 37.8) scale(.79)" style="stroke-opacity:.09"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(56 50.4) scale(.72)" style="stroke-opacity:.06"/>
+      </svg>
       <div class="hero-content">
         <div class="hero-round"><b id="heroRoundBig">12</b><span class="hero-round-sub">/22</span></div>
 
@@ -1643,7 +1666,7 @@
 
 <!-- Footer -->
 <div class="footer">
-    <p>F1 2026 Season Dashboard · Data via F1 MCP Server · <span id="footer-update">Loading...</span></p>
+    <p>F1 Season Dashboard · Data from FastF1 · <span id="footer-update">Loading...</span></p>
     <p style="margin-top:4px;">Predictions are AI-generated estimates based on qualifying data, championship standings & historical track performance</p>
 </div>
 
@@ -2998,6 +3021,39 @@ function renderWdcFeasibility() {
     card.style.display = '';
 }
 
+// ====== HERO CONTOUR VARIANTS ======
+// 5 racetrack-corner styles; one is picked at random on each load.
+// Each master path is one flowing cubic-Bézier chain — control points stay
+// collinear at every joint (C1-continuous), so the line never kinks. It
+// mimics a real corner sequence, entering on the card's bottom edge and
+// exiting the RIGHT edge well above the bottom-right corner, so the curve
+// and the card border enclose a region without piling into the corner.
+// The 5 strokes are near-full-size racing lines fanned through the same
+// corner (scales 1 → .72, anchored bottom-right so endpoints stay glued
+// to the edges) — they shrink only slightly, never into a small huddle.
+const CONTOUR_VARIANTS = [
+  // V1 — Esses: flowing left-right flicks (Suzuka S-curves)
+  'M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42',
+  // V2 — Hairpin: straight in, smooth 180° switchback, exit flows right (Loews)
+  'M 100 180 C 100 148 100 118 100 94 C 100 64 146 64 146 94 C 146 112 172 118 200 118',
+  // V3 — Sweeper: grand double-apex arc from bottom edge to right edge (Copse/130R)
+  'M 48 180 C 48 140 72 108 108 94 C 144 80 174 78 200 82',
+  // V4 — Chicane: quick right-left flick between straights (bus-stop/Variante)
+  'M 84 180 C 84 152 84 128 96 118 C 108 108 122 108 130 118 C 138 128 158 120 176 116 C 185 114 194 112 200 110',
+  // V5 — Sector: wide corner over the top, tightens onto the right edge (T1-T3)
+  'M 72 180 C 72 148 88 122 114 112 C 140 102 154 104 162 92 C 170 80 182 76 200 76'
+];
+const CONTOUR_SCALES = [1, .93, .86, .79, .72];
+const CONTOUR_OPS = [.20, .16, .12, .09, .06];
+function renderContourVariant() {
+  const svg = document.querySelector('.hero-contour');
+  if (!svg) return;
+  const d = CONTOUR_VARIANTS[Math.floor(Math.random() * CONTOUR_VARIANTS.length)];
+  svg.innerHTML = CONTOUR_SCALES.map((s, i) =>
+    `<path d="${d}" transform="translate(${(200 * (1 - s)).toFixed(1)} ${(180 * (1 - s)).toFixed(1)}) scale(${s})" style="stroke-opacity:${CONTOUR_OPS[i]}"/>`
+  ).join('');
+}
+
 // ====== INIT ======
 // ====== HERO 3D TILT ======
 function initHeroTilt() {
@@ -3024,6 +3080,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollAnimations();
     initFloatingCountdown();
     initHeroTilt();
+    renderContourVariant();
 });
 </script>
 </body>
