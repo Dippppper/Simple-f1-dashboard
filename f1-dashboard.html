@@ -975,6 +975,103 @@
             color: var(--gray-3);
             font-variant-numeric: tabular-nums;
         }
+        /* "more" circular pill + frosted-glass popover */
+        .wdc-more-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+        .wdc-more-pop {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            right: 0;
+            width: 250px;
+            border-radius: 14px;
+            background: rgba(22,22,25,0.55);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 10px 36px rgba(0,0,0,0.38);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform-origin: bottom right;
+            transform: translateY(-6px) scale(0.88);
+            transition: opacity 0.2s ease, transform 0.28s cubic-bezier(0.34, 1.4, 0.5, 1);
+            z-index: 60;
+            padding: 16px 14px 12px;
+        }
+        .wdc-more-wrap:hover .wdc-more-pop {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
+        /* invisible bridge so hover survives the 10px gap between pill and card */
+        .wdc-more-pop::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 12px;
+        }
+        /* popover content: header + driver list */
+        .wdc-more-pop .pop-head {
+            display: flex;
+            align-items: baseline;
+            gap: 7px;
+            padding: 0 4px 10px;
+        }
+        .wdc-more-pop .pop-num {
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--gray-1);
+        }
+        .wdc-more-pop .pop-title {
+            font-size: 11px;
+            color: var(--gray-4);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            line-height: 1.35;
+        }
+        .wdc-more-pop .pop-list {
+            display: flex;
+            flex-direction: column;
+            max-height: 252px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gray-6) transparent;
+        }
+        .wdc-more-pop .pop-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .wdc-more-pop .pop-list::-webkit-scrollbar-thumb {
+            background: var(--gray-6);
+            border-radius: 2px;
+        }
+        .wdc-more-pop .pop-row {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 4px;
+        }
+        .wdc-more-pop .pop-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        .wdc-more-pop .pop-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gray-2);
+        }
+        .wdc-more-pop .pop-pts {
+            font-size: 12px;
+            color: var(--gray-4);
+            font-variant-numeric: tabular-nums;
+        }
         .wdc-legend {
             display: flex;
             flex-direction: column;
@@ -982,26 +1079,21 @@
             flex: 1;
         }
         .wdc-legend-item {
-            position: relative;
             display: grid;
             grid-template-columns: 1fr auto;
             align-items: center;
             gap: 16px;
-            padding: 10px 0 10px 7px;
+            padding: 10px 0;
         }
-        .wdc-legend-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 13px;
-            bottom: 13px;
-            width: 2px;
-            border-radius: 1px;
-            background: transparent;
-            transition: background-color 0.2s ease;
+        .wdc-legend-name {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--gray-1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .wdc-legend-item.active::before {
-            background: var(--bar-color, var(--accent-red));
+        .wdc-legend-item.active .wdc-legend-name {
+            font-weight: 700;
         }
         .wdc-legend-color {
             width: 10px;
@@ -1013,13 +1105,6 @@
             display: flex;
             flex-direction: column;
         }
-        .wdc-legend-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--gray-1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
         .wdc-legend-reason {
             font-size: 12px;
             color: var(--gray-4);
@@ -1028,8 +1113,11 @@
         .wdc-legend-prob {
             font-family: var(--font-sans);
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 400;
             color: var(--gray-2);
+        }
+        .wdc-legend-item.active .wdc-legend-prob {
+            font-weight: 700;
         }
 
         /* Weekend Timeline - Floating Sidebar - grayscale */
@@ -3015,9 +3103,19 @@ function renderWdcFeasibility() {
         return `<span class="wdc-capsule" style="${capStyle}"><span class="cap-code" style="${codeStyle}">${getCode(d.name)}</span><span class="cap-gap" style="${gapStyle}">${gapTxt}</span></span>`;
     }).join('');
 
+    const canWinDrivers = (wf && wf.drivers) ? wf.drivers.filter(d => d.canWin) : [];
+    let moreHTML = '';
+    if (canWinDrivers.length) {
+        const rows = canWinDrivers.map(d => {
+            const tc = getTeamColor(d.team);
+            return `<div class="pop-row"><span class="pop-dot" style="background:${tc}"></span><span class="pop-name">${d.name}</span><span class="pop-pts">${d.currentPoints} <span style="color:var(--gray-5)">→</span> ${d.maxPossible}</span></div>`;
+        }).join('');
+        moreHTML = `<div class="pop-head"><span class="pop-num">${canWinDrivers.length}</span><span class="pop-title">drivers still can win the WDC</span></div><div class="pop-list">${rows}</div>`;
+    }
+
     card.innerHTML = `
         <div class="feas-header"><span class="feas-pts">${ptsRemain}</span><span class="feas-label">pts remain</span></div>
-        <div class="wdc-capsules">${caps}</div>`;
+        <div class="wdc-capsules">${caps}<span class="wdc-more-wrap"><span class="wdc-capsule-more" style="width:30px;height:30px;border-radius:50%;border:1.5px solid var(--gray-5);background:rgba(255,255,255,0.03);display:inline-flex;align-items:center;justify-content:center;color:var(--gray-4);font-size:14px;font-weight:700;letter-spacing:1px;line-height:1">···</span><div class="wdc-more-pop">${moreHTML}</div></span></div>`;
     card.style.display = '';
 }
 
