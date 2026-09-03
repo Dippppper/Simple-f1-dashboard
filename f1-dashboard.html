@@ -1292,6 +1292,49 @@
         .api-status.error { color: #E10600; }
         .api-status.success { color: #00D26A; }
 
+        /* ===== SCHEDULE — season timeline ===== */
+        .sched-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0 60px; }
+        .sched-item { display: flex; gap: 14px; padding: 8px 0; position: relative; }
+        .sched-item::before { content: ''; position: absolute; left: 85px; top: 0; bottom: 0; width: 2px; background: var(--gray-6); }
+        .sched-item:first-child::before { top: 15px; }
+        .sched-item:last-child::before { bottom: calc(100% - 15px); }
+        .sched-date { flex: 0 0 56px; text-align: right; font-size: 12px; color: var(--gray-4); padding-top: 8px; white-space: nowrap; }
+        .sched-node { flex: 0 0 30px; display: flex; justify-content: center; position: relative; z-index: 1; }
+        .sched-node span {
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+        }
+        .sched-body { flex: 1; min-width: 0; padding-top: 1px; }
+        .sched-name { font-size: 15px; font-weight: 600; color: var(--gray-1); line-height: 1.3; }
+        .sched-sub { font-size: 12px; color: var(--gray-4); margin-top: 2px; }
+        .sched-chip {
+            display: inline-block; margin-left: 8px; padding: 1px 7px; border: 1px solid rgba(225,6,0,0.55);
+            color: #E10600; font-size: 9px; font-weight: 600; letter-spacing: 1px; border-radius: 4px;
+            vertical-align: 2px;
+        }
+        .sched-item.done { opacity: 0.45; }
+        .sched-item.done .sched-node span { background: var(--gray-bar); color: var(--gray-4); }
+        .sched-item.done .sched-name { color: var(--gray-3); font-weight: 500; }
+        .sched-item.next .sched-node span {
+            background: var(--accent-red); color: #fff;
+            box-shadow: 0 0 0 4px rgba(225,6,0,0.18), 0 0 16px rgba(225,6,0,0.5);
+        }
+        .sched-item.next .sched-name { color: #fff; font-weight: 700; }
+        .sched-item.next .sched-sub { color: var(--gray-3); }
+        .sched-item.upcoming .sched-node span { background: var(--gray-7); border: 1.5px solid var(--gray-5); color: var(--gray-2); }
+        .sched-item.upcoming .sched-name { color: var(--gray-1); }
+        .sched-item.upcoming:hover .sched-name { color: #fff; }
+        .sched-item.upcoming:hover .sched-node span { border-color: rgba(225,6,0,0.7); }
+        .sched-month { display: flex; align-items: center; padding: 14px 0 10px; position: relative; }
+        .sched-month::before { content: ''; position: absolute; left: 85px; top: -14px; height: calc(100% + 28px); width: 2px; background: var(--gray-6); }
+        .sched-month:first-child::before { top: 0; height: 100%; }
+        .sched-month-label {
+            margin-left: 100px; font-size: 11px; font-weight: 700; letter-spacing: 3px;
+            color: var(--gray-5); text-transform: uppercase;
+        }
+        @media (max-width: 768px) { .sched-wrap { grid-template-columns: 1fr; } }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-inner { flex-direction: column; align-items: flex-start; }
@@ -1614,6 +1657,24 @@
         </button>
     </div>
 </div>
+
+<!-- Schedule (season calendar) -->
+<section class="container fade-in">
+    <div class="section-header">
+        <div class="section-title">SCHEDULE</div>
+        <div class="tab-bar" id="schedTabs">
+            <button class="tab-btn active" onclick="filterSchedule('all', this)">All</button>
+            <button class="tab-btn" onclick="filterSchedule('sprint', this)">Sprint</button>
+        </div>
+    </div>
+    <div class="section-block">
+        <div class="sched-wrap">
+            <div id="schedCol1"></div>
+            <div id="schedCol2"></div>
+        </div>
+        <div class="meta-bottom" id="schedMeta">2026 Season</div>
+    </div>
+</section>
 
 <!-- Results -->
 <section class="container fade-in">
@@ -2839,6 +2900,60 @@ function initScrollAnimations() {
     document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 }
 
+// ====== SCHEDULE (season timeline) ======
+let schedFilter = 'all';
+function schedMonthLabel(dateStr) {
+    const d = parseDate8(dateStr);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleString('en-US', { month: 'long', timeZone: 'Asia/Shanghai' });
+}
+// Highlight follows the Hero's findCurrentEvent() (same weekend window).
+// Difference: after the final round's window closes, no row is highlighted.
+function schedNextRound() {
+    const cur = findCurrentEvent();
+    if (!cur) return null;
+    const last = SEASON_2026[SEASON_2026.length - 1];
+    if (Number(cur.round) === Number(last.round) && Date.now() > parseDate8(last.date).getTime() + 86400000) return null;
+    return Number(cur.round);
+}
+function renderSchedCol(races, nextRound) {
+    let html = '', lastMonth = null;
+    races.forEach(r => {
+        const m = schedMonthLabel(r.date);
+        if (m && m !== lastMonth) { html += `<div class="sched-month"><div class="sched-month-label">${m}</div></div>`; lastMonth = m; }
+        const rd = Number(r.round);
+        const st = (nextRound === null || rd < nextRound) ? 'done' : (rd === nextRound ? 'next' : 'upcoming');
+        const sprint = r.format === 'sprint_qualifying' ? '<span class="sched-chip">SPRINT</span>' : '';
+        html += `<div class="sched-item ${st}">
+            <div class="sched-date">${fmtDay8(r.date)}</div>
+            <div class="sched-node"><span>${r.round}</span></div>
+            <div class="sched-body">
+                <div class="sched-name">${r.eventName}${sprint}</div>
+                <div class="sched-sub">${r.circuit} · ${r.location}</div>
+            </div>
+        </div>`;
+    });
+    return html;
+}
+function renderSchedule() {
+    const col1 = document.getElementById('schedCol1');
+    const col2 = document.getElementById('schedCol2');
+    if (!col1 || !col2) return;
+    const nextRound = schedNextRound();
+    const list = SEASON_2026.filter(r => schedFilter === 'all' || r.format === 'sprint_qualifying');
+    const half = Math.ceil(list.length / 2);
+    col1.innerHTML = renderSchedCol(list.slice(0, half), nextRound);
+    col2.innerHTML = renderSchedCol(list.slice(half), nextRound);
+    const meta = document.getElementById('schedMeta');
+    if (meta) meta.textContent = '2026 Season';
+}
+function filterSchedule(mode, btn) {
+    schedFilter = mode;
+    document.querySelectorAll('#schedTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderSchedule();
+}
+
 // ====== AI PREDICTION ======
 function saveApiKey() {
     const p = document.getElementById('aiProvider').value;
@@ -3179,6 +3294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFloatingCountdown();
     initHeroTilt();
     renderContourVariant();
+    renderSchedule();
 });
 </script>
 </body>
