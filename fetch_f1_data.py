@@ -146,6 +146,8 @@ def fetch_all(year: int | None = None) -> dict:
     race_data = []
     pole_lap_data = {}
     fastest_lap_data = {}
+    quali_source = None   # set when quali data is carried over from an earlier round
+    race_source = None    # set when race data is carried over from an earlier round
     if active_events:
         last = active_events[-1]
         event_data = {
@@ -163,15 +165,52 @@ def fetch_all(year: int | None = None) -> dict:
             "qualifyingEnd": last["sessions"].get("qualifying", {}).get("date", ""),
             "sessions": last["sessions"],
         }
-        # fetch results per session — only sessions that have finished
-        if session_has_results(year, int(last["round"]), "Q"):
+        # Fetch results per session. Prefer the active event's own sessions, but
+        # when the current weekend hasn't produced them yet (e.g. the script runs
+        # in the days after a new weekend opens, or between FP1 and quali), fall
+        # back to the last completed event so the RESULTS / LAP TIME / prediction
+        # sections keep showing the most recent available data.
+        last_round = int(last["round"])
+
+        def resolve_results_round(stype):
+            """Return the round to fetch session results from: the active round
+            if it already has results, otherwise the last completed round."""
+            if session_has_results(year, last_round, stype):
+                return last_round
+            if completed_events:
+                fb = int(completed_events[-1]["round"])
+                if session_has_results(year, fb, stype):
+                    return fb
+            return None
+
+        def source_meta(rd):
+            for e in completed_events:
+                if int(e["round"]) == rd:
+                    return {
+                        "round": e["round"],
+                        "eventName": e["eventName"],
+                        "country": e["country"],
+                        "location": e["location"],
+                    }
+            return None
+
+        q_round = resolve_results_round("Q")
+        if q_round is not None:
             try:
-                qualifying_data, pole_lap_data = fetch_qualifying(year, int(last["round"]))
+                qualifying_data, pole_lap_data = fetch_qualifying(year, q_round)
+                if q_round != last_round:
+                    quali_source = source_meta(q_round)
+                    print(f"   qualifying: no results for round {last_round} yet — using round {q_round}")
             except Exception as e:
                 print(f"  ⚠ qualifying: {e}")
-        if session_has_results(year, int(last["round"]), "R"):
+
+        r_round = resolve_results_round("R")
+        if r_round is not None:
             try:
-                race_data, fastest_lap_data = fetch_race(year, int(last["round"]))
+                race_data, fastest_lap_data = fetch_race(year, r_round)
+                if r_round != last_round:
+                    race_source = source_meta(r_round)
+                    print(f"   race: no results for round {last_round} yet — using round {r_round}")
             except Exception as e:
                 print(f"  ⚠ race: {e}")
 
@@ -207,6 +246,10 @@ def fetch_all(year: int | None = None) -> dict:
         "lastUpdated": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "nextEvent": next_event_data,
         "wdcFeasibility": wdc_feasibility,
+        # Source labels when results are carried over from an earlier round
+        # (null when the data belongs to the active event itself)
+        "qualiSource": quali_source,
+        "raceSource": race_source,
     }
 
 

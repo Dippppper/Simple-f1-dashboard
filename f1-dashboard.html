@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-CN" data-page-node-id="z6cEdktJ4SjUPdvhDF9HCW">
+<head data-page-node-id="VDxGjgxhbGFA6VCDn5DLMq">
+    <meta charset="UTF-8" data-page-node-id="Ukdc0N5z9f9Tz7yLYtDqvG">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="LGW6WhACBb44uDetdGlHCy">
     <title>F1 2026赛季 · Hungarian GP Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" data-page-node-id="oGaK6c18sNeALio03qlBVF">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet" data-page-node-id="3lBjjIA8grJtdFxfckCa2c">
     <style>
         /* Google Sans - local fonts */
         @font-face {
@@ -1491,6 +1491,40 @@
         .floating-refresh:hover { color: #E10600; background: var(--gray-5); transform: rotate(90deg); }
         .floating-refresh svg { transition: inherit; }
         .floating-refresh .refresh-icon.spinning svg { animation: spinRefresh 0.8s linear; }
+
+        /* Floating actions column (refresh + collapse) — sits where the refresh button used to live */
+        .floating-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+        /* Collapse/expand toggle — visual mirrors .floating-refresh so they read as a pair */
+        .floating-collapse {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--gray-6);
+            color: var(--gray-3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: color 0.2s, background 0.2s;
+            pointer-events: auto;
+            flex-shrink: 0;
+        }
+        .floating-collapse:hover { color: #E10600; background: var(--gray-5); }
+        .floating-collapse svg { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* When panel is collapsed, chevron flips to point right (= "expand right to reveal panel") */
+        .left-side-stack.collapsed .floating-collapse svg { transform: rotate(180deg); }
+        /* Collapsed state: hide the heavy panels, shrink the row so the buttons hug the left edge */
+        .left-side-stack.collapsed .floating-countdown,
+        .left-side-stack.collapsed .timeline-float { display: none; }
+        .left-side-stack.collapsed .left-side-row { width: auto; }
         .floating-cd-label {
             font-size: 10px;
             font-weight: 600;
@@ -1592,62 +1626,62 @@
         }
     </style>
 </head>
-<body>
+<body data-page-node-id="xMcvfcUMdR8m78bCr4vEoR">
 
 <!-- Hero -->
-<section class="hero">
-  <div class="hero-inner">
+<section class="hero" data-page-node-id="HzLDximLzkxDrD4mVKkbw2">
+  <div class="hero-inner" data-page-node-id="vgnSWitoYW4bPCRl105cEJ">
     <!-- LEFT: identity block (outside the card) -->
-    <div class="hero-left">
-      <img class="f1-logo-svg" src="f1-logo.svg" alt="F1">
+    <div class="hero-left" data-page-node-id="4SCQng0tu30PHzJEZoMtiM">
+      <img class="f1-logo-svg" src="f1-logo.svg" alt="F1" data-page-node-id="0zcqyOGDsyaQDXRURymdr5">
 
-      <div class="hero-gp">
-        <h1 class="hero-title" id="heroTitle">DUTCH GRAND PRIX</h1>
-        <p class="hero-subtitle" id="heroSubtitle">FORMULA 1 HEINEKEN DUTCH GRAND PRIX 2026</p>
+      <div class="hero-gp" data-page-node-id="lxLMN9K0j2qBpRJyAcfmWW">
+        <h1 class="hero-title" id="heroTitle" data-page-node-id="BTAedXDnLAk4P2ogAlyFU6">DUTCH GRAND PRIX</h1>
+        <p class="hero-subtitle" id="heroSubtitle" data-page-node-id="48I8QUAnW1rvX0DR5pZV5B">FORMULA 1 HEINEKEN DUTCH GRAND PRIX 2026</p>
       </div>
 
-      <div class="session-status" id="sessionStatus">
-        <div class="session-dot" id="sessionDot"></div>
-        <span class="session-text" id="sessionText">UPCOMING RACE</span>
+      <div class="session-status" id="sessionStatus" data-page-node-id="CYrtTQF70SqcCzN5uX66sY">
+        <div class="session-dot" id="sessionDot" data-page-node-id="Tx2nU4hjj3wyvV5M34C364"></div>
+        <span class="session-text" id="sessionText" data-page-node-id="FKz15wMLhp0VbhzLkcoZGg">UPCOMING RACE</span>
       </div>
     </div>
 
     <!-- RIGHT: editorial red stage with data block -->
-    <div class="hero-stage" id="heroStage">
-      <svg class="hero-contour" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" style="stroke-opacity:.20"/>
-        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(14 12.6) scale(.93)" style="stroke-opacity:.16"/>
-        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(28 25.2) scale(.86)" style="stroke-opacity:.12"/>
-        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(42 37.8) scale(.79)" style="stroke-opacity:.09"/>
-        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(56 50.4) scale(.72)" style="stroke-opacity:.06"/>
+    <div class="hero-stage" id="heroStage" data-page-node-id="DT1gGJuUpF14TXt2Nj9Drg">
+      <svg class="hero-contour" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true" data-page-node-id="Y6treQ51cev5AbOCedkk7Y">
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" style="stroke-opacity:.20" data-page-node-id="Nw9maw7BWriQ8YAKNMGScU"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(14 12.6) scale(.93)" style="stroke-opacity:.16" data-page-node-id="NHq5oS8IAQuR1q8PAB3dcF"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(28 25.2) scale(.86)" style="stroke-opacity:.12" data-page-node-id="A6KU7im58VSK9EcUyVWPZE"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(42 37.8) scale(.79)" style="stroke-opacity:.09" data-page-node-id="AtEKxKYYAWNoj2YNu0INUc"/>
+        <path d="M 64 180 C 64 148 84 138 92 120 C 100 102 84 86 92 68 C 100 50 148 42 200 42" transform="translate(56 50.4) scale(.72)" style="stroke-opacity:.06" data-page-node-id="tHXuXVetV6lZt6DYPgMW75"/>
       </svg>
-      <div class="hero-content">
-        <div class="hero-round"><b id="heroRoundBig">12</b><span class="hero-round-sub">/22</span></div>
+      <div class="hero-content" data-page-node-id="4mwHzevT1ORh73OQTccGne">
+        <div class="hero-round" data-page-node-id="gs8uw1spMUVC9Hcpj6HzDH"><b id="heroRoundBig" data-page-node-id="jw1SRGYYq7dFbiBw63hq9b">12</b><span class="hero-round-sub" data-page-node-id="GMUfJ25GO083fuBMbLQ1AG">/22</span></div>
 
-        <div class="hero-date-row">
-          <div class="hero-date-swap" id="heroDateSwap">
-            <div class="hero-date-placeholder">
-              <div class="hero-date">Aug 21</div>
-              <div class="hero-date-meta">
-                <div class="hero-dow">FP1</div>
-                <div class="hero-time">10:30</div>
+        <div class="hero-date-row" data-page-node-id="WggekAsZF8SKOwTBQlKCn8">
+          <div class="hero-date-swap" id="heroDateSwap" data-page-node-id="biQUTUbJmf1nf21tgjUZWm">
+            <div class="hero-date-placeholder" data-page-node-id="uUNBf6bk2k2e2eXn1YAopC">
+              <div class="hero-date" data-page-node-id="UPuJYQDGIiMHH070YlztXr">Aug 21</div>
+              <div class="hero-date-meta" data-page-node-id="99xDBW8iHTMJ1LJd54p2QG">
+                <div class="hero-dow" data-page-node-id="ngYujZ5eWiEq8AHQTYaWOP">FP1</div>
+                <div class="hero-time" data-page-node-id="lC8cROArc9mbdDMue7Yz54">10:30</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="hero-circuit">
-          <span class="hero-circuit-ic">
-            <svg viewBox="0 0 24 24"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10.5" r="2.6"/></svg>
+        <div class="hero-circuit" data-page-node-id="SsonS20cN4p3qlifUzRFA2">
+          <span class="hero-circuit-ic" data-page-node-id="Vfz8tK3DPprBE06BHTkhP6">
+            <svg viewBox="0 0 24 24" data-page-node-id="zk0il9Lc4vakUi5NCvdpTK"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z" data-page-node-id="D6D10UdpaTi9tAAU5X0BCa"/><circle cx="12" cy="10.5" r="2.6" data-page-node-id="KQpEwdPJbwKcyYlOzi9Ra2"/></svg>
           </span>
-          <span class="hero-circuit-name">
-            <span class="sizer" id="heroCircuitSizer">Netherlands</span>
-            <span class="n a" id="heroCircuitA">Zandvoort</span>
-            <span class="n b" id="heroCircuitB">Netherlands</span>
+          <span class="hero-circuit-name" data-page-node-id="dQRT18PbAnDRNsogWp8J0h">
+            <span class="sizer" id="heroCircuitSizer" data-page-node-id="Kpo125oZaHnaD22SoBSF6V">Netherlands</span>
+            <span class="n a" id="heroCircuitA" data-page-node-id="AtYXD4pvvGACWl3DchQw4C">Zandvoort</span>
+            <span class="n b" id="heroCircuitB" data-page-node-id="MTqgT29xDbHBH0dAzjgEM4">Netherlands</span>
           </span>
         </div>
 
-        <div class="hero-cd" id="cd">--:--:--</div>
+        <div class="hero-cd" id="cd" data-page-node-id="zur5JV8D7DoPQpr2u2XwGi">--:--:--</div>
       </div>
     </div>
   </div>
@@ -1655,193 +1689,200 @@
 
 <!-- Weekend Timeline - Floating Sidebar -->
 <!-- Left side stack: countdown + (timeline + refresh) -->
-<div class="left-side-stack">
-    <div class="floating-countdown" id="floatingCd">
-        <div class="floating-cd-main">
-            <div class="floating-cd-label">Time to Lights Out</div>
-            <div class="floating-cd-row">
-                <span class="floating-cd-num" id="fcd-h">--</span><span class="floating-cd-sep">:</span>
-                <span class="floating-cd-num" id="fcd-m">--</span><span class="floating-cd-sep">:</span>
-                <span class="floating-cd-num" id="fcd-s">--</span>
+<div class="left-side-stack" data-page-node-id="9JnU4WqHQNPUU3bDFc6tJd">
+    <div class="floating-countdown" id="floatingCd" data-page-node-id="0y6Xms2faAsaDUIOJZYscc">
+        <div class="floating-cd-main" data-page-node-id="4fm9paXLTykPEOxdx6mlb7">
+            <div class="floating-cd-label" data-page-node-id="dRlvC0j7WkkVigLMdFCfiO">Time to Lights Out</div>
+            <div class="floating-cd-row" data-page-node-id="DJTlZvmODXg83tJUPF5r4J">
+                <span class="floating-cd-num" id="fcd-h" data-page-node-id="TUwWzNB1Jc1BRqFLJOhwyh">--</span><span class="floating-cd-sep" data-page-node-id="SGrSWCHF8M0yWfsLcJ4RMf">:</span>
+                <span class="floating-cd-num" id="fcd-m" data-page-node-id="Z84n9EnUV6QBBdJI8T2C5X">--</span><span class="floating-cd-sep" data-page-node-id="CwFetxS8yBfodOstdItNDV">:</span>
+                <span class="floating-cd-num" id="fcd-s" data-page-node-id="GfzUpkShhyLlAHSbyF4Sk9">--</span>
             </div>
         </div>
-        <div class="floating-cd-hover">
-            <div class="floating-cd-hover-label" id="fcdRoundLabel">ROUND --</div>
-            <div class="floating-cd-gp" id="fcdGp">--</div>
+        <div class="floating-cd-hover" data-page-node-id="Rlp8pLgi0MD0H9yF5sBiIy">
+            <div class="floating-cd-hover-label" id="fcdRoundLabel" data-page-node-id="t1yxJNiuKkrFGQaVwjZ1SD">ROUND --</div>
+            <div class="floating-cd-gp" id="fcdGp" data-page-node-id="PV1saLDXQKhVKCIiaHq4zc">--</div>
         </div>
     </div>
-    <div class="left-side-row">
-        <div class="timeline-float">
-            <div class="timeline" id="timelineList"></div>
+    <div class="left-side-row" data-page-node-id="8oH0o5NrLEIDIJNUVyZgcd">
+        <div class="timeline-float" data-page-node-id="aXIohKknlTpjTtus2h8y6L">
+            <div class="timeline" id="timelineList" data-page-node-id="WSH66sKzpJdrz4wyhLaTrT"></div>
         </div>
-        <button class="floating-refresh" onclick="refreshData()" title="Refresh data">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/>
-                <polyline points="21 3 21 8 16 8"/>
-            </svg>
-        </button>
+        <div class="floating-actions" data-page-node-id="SJLlg958AxuH63LWJusRdW">
+            <button class="floating-refresh" onclick="refreshData()" title="Refresh data" aria-label="Refresh data" data-page-node-id="Ppejz3YoRA8UaBqPgvdDEO">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="uxXzm2TneV9N8OxOxTn7Pj">
+                    <path d="M21 12a9 9 0 1 1-3-6.7L21 8" data-page-node-id="cOAnI1BbtornBT8A9WGTnx"/>
+                    <polyline points="21 3 21 8 16 8" data-page-node-id="LCCPLdmB4U6jLGiFnJwEUM"/>
+                </svg>
+            </button>
+            <button class="floating-collapse" onclick="toggleLeftStack()" title="Collapse panel" aria-label="Collapse panel" data-page-node-id="2V3nCVUPhe3EAQGpUJKcNl">
+                <svg id="collapseIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="G67LVJjWgk1cldiEFNqt1M">
+                    <polyline points="15 18 9 12 15 6" data-page-node-id="XWh7u551mVCt5lqeDQTvHz"/>
+                </svg>
+            </button>
+        </div>
     </div>
 </div>
 
 <!-- Schedule (season calendar) -->
-<section class="container fade-in">
-    <div class="section-header">
-        <div class="section-title">SCHEDULE</div>
-        <div class="tab-bar" id="schedTabs">
-            <button class="tab-btn active" onclick="filterSchedule('all', this)">All</button>
-            <button class="tab-btn" onclick="filterSchedule('sprint', this)">Sprint</button>
+<section class="container fade-in" data-page-node-id="lnsj2WMtfdEEIqDFSjHBPx">
+    <div class="section-header" data-page-node-id="OdED9VHwon7oyLWTOKODkm">
+        <div class="section-title" data-page-node-id="vWHFcBWxCf6IeKhiV27ax0">SCHEDULE</div>
+        <div class="tab-bar" id="schedTabs" data-page-node-id="5iG8AC6zXb6ExmVTuzDugp">
+            <button class="tab-btn active" onclick="filterSchedule('all', this)" data-page-node-id="8AaOZhxzjGN8gSXMIKLDb3">All</button>
+            <button class="tab-btn" onclick="filterSchedule('sprint', this)" data-page-node-id="LP38FE0tGni6kEaA8Xem1Y">Sprint</button>
         </div>
     </div>
-    <div class="section-block">
-        <div class="sched-wrap">
-            <div id="schedCol1"></div>
-            <div id="schedCol2"></div>
+    <div class="section-block" data-page-node-id="A11TYIzuE77WyBmNVQek85">
+        <div class="sched-wrap" data-page-node-id="ZVa5shkM4uFP5Ty9nJh9iC">
+            <div id="schedCol1" data-page-node-id="rOobEjNAPGTRYUHOHZL130"></div>
+            <div id="schedCol2" data-page-node-id="0ceY07P9UKwhBjBOrH1tqr"></div>
         </div>
-        <div class="meta-bottom" id="schedMeta">2026 Season</div>
+        <div class="meta-bottom" id="schedMeta" data-page-node-id="48xhoLsmqIsDaC9onzuNcH">2026 Season</div>
     </div>
 </section>
 
 <!-- Results -->
-<section class="container fade-in">
-    <div class="section-header">
-        <div class="section-title" id="resultTitle">RESULTS</div>
-        <div class="tab-bar" id="sessionTabs">
-            <button class="tab-btn" data-session="race" onclick="switchSession('race')">Race</button>
-            <button class="tab-btn" data-session="qualifying" onclick="switchSession('qualifying')">Qualifying</button>
+<section class="container fade-in" data-page-node-id="hNCCNTplZsQY8YdXiUB1e9">
+    <div class="section-header" data-page-node-id="24im8B3xx2bsh3AtMsh8V0">
+        <div class="section-title" id="resultTitle" data-page-node-id="KFImFr8Gx9G2Zs8nPG6I3L">RESULTS</div>
+        <div class="tab-bar" id="sessionTabs" data-page-node-id="esgeiKLALkIaJtXpjwaBmf">
+            <button class="tab-btn" data-session="race" onclick="switchSession('race')" data-page-node-id="tvqwnrOLDy2o7O0Mj6t2H1">Race</button>
+            <button class="tab-btn" data-session="qualifying" onclick="switchSession('qualifying')" data-page-node-id="cppSc6CkpB4vq8t50D7xJg">Qualifying</button>
         </div>
     </div>
-    <div class="section-block">
-        <table class="qual-table" id="resultTable">
-            <thead id="resultTableHead"></thead>
-            <tbody id="resultTableBody"></tbody>
+    <div class="section-block" data-page-node-id="Omt44mfcrZk5ixXuq3gyOh">
+        <table class="qual-table" id="resultTable" data-page-node-id="iFY7tIcPr8yr802B5eNM9z">
+            <thead id="resultTableHead" data-page-node-id="1VABvqlbw6GRA7AY0482Vf"></thead>
+            <tbody id="resultTableBody" data-page-node-id="jsr5MvYLngBBg3QyXmriHC"></tbody>
         </table>
-        <div class="meta-bottom" id="resultMeta">2026-07-26</div>
+        <div class="meta-bottom" id="resultMeta" data-page-node-id="nhOpr5u9XwbQNDNpMnUorP">2026-07-26</div>
     </div>
 </section>
 
 <!-- Standings -->
-<section class="container fade-in">
-    <div class="section-header">
-        <div class="section-title">STANDINGS</div>
-        <div class="tab-bar">
-            <button class="tab-btn active" onclick="switchTab('drivers')">Driver</button>
-            <button class="tab-btn" onclick="switchTab('constructors')">Constructor</button>
+<section class="container fade-in" data-page-node-id="sE10JZMTEz47seQYUkLa6N">
+    <div class="section-header" data-page-node-id="85Zqq0GGISO4rZESjx69ZO">
+        <div class="section-title" data-page-node-id="zsrfHfJcN6sQxQwIw4VRWL">STANDINGS</div>
+        <div class="tab-bar" data-page-node-id="ZfWVGoCwlUbcuPLJX5hDrp">
+            <button class="tab-btn active" onclick="switchTab('drivers')" data-page-node-id="djKpj4lhmlnHkPe7juznY5">Driver</button>
+            <button class="tab-btn" onclick="switchTab('constructors')" data-page-node-id="DkMcmmV5PokUH3jagKQq5f">Constructor</button>
         </div>
     </div>
-    <div class="tab-content active" id="tab-drivers">
-        <div class="section-block">
-            <div id="driverStandingsCard"></div>
-            <div class="meta-bottom">After Round 10 · Belgian GP</div>
+    <div class="tab-content active" id="tab-drivers" data-page-node-id="NeQbsp7pBhB8Qi3W5ROFM8">
+        <div class="section-block" data-page-node-id="14f5OozQcNzi9eKi7SVoAi">
+            <div id="driverStandingsCard" data-page-node-id="8xi8kkg6FcSOEPtjOcORbX"></div>
+            <div class="meta-bottom" data-page-node-id="ZMpwvyplBH1qxIA0UEqFPH">After Round 10 · Belgian GP</div>
         </div>
     </div>
-    <div class="tab-content" id="tab-constructors">
-        <div class="section-block">
-            <div id="constructorStandings"></div>
-            <div class="meta-bottom">After Round 10 · Belgian GP</div>
+    <div class="tab-content" id="tab-constructors" data-page-node-id="bQxSnhPWjyT6lJVpEDTIX1">
+        <div class="section-block" data-page-node-id="Xzevl7VqVd7V49vmV2fKK7">
+            <div id="constructorStandings" data-page-node-id="Bf7AVjSsnSzRh0LKoLQcYI"></div>
+            <div class="meta-bottom" data-page-node-id="qwFowjX0Y3YQv33ThWiE61">After Round 10 · Belgian GP</div>
         </div>
     </div>
 </section>
 
 <!-- LAP TIME (Pole + Fastest Lap) -->
-<section class="container fade-in">
-    <div class="section-header">
-        <div class="section-title">LAP TIME</div>
-        <div class="tab-bar" id="lapTabs">
-            <button class="tab-btn active" data-lap="pole" onclick="switchLapTab('pole')">Pole</button>
-            <button class="tab-btn" data-lap="fastest" onclick="switchLapTab('fastest')">Fastest Lap</button>
+<section class="container fade-in" data-page-node-id="rKMaNZHXGlO1o5bgEwRquT">
+    <div class="section-header" data-page-node-id="7OstFWR2IgTVcKEbl2rBxA">
+        <div class="section-title" data-page-node-id="RQvM7EALV5JJXDLo0T8arm">LAP TIME</div>
+        <div class="tab-bar" id="lapTabs" data-page-node-id="i9izGrfAm6WUR6SthUsAXl">
+            <button class="tab-btn active" data-lap="pole" onclick="switchLapTab('pole')" data-page-node-id="rggqDs4nLQ0uKmCi0HHRGl">Pole</button>
+            <button class="tab-btn" data-lap="fastest" onclick="switchLapTab('fastest')" data-page-node-id="9cEwro1CmdGiupA6XeMG4X">Fastest Lap</button>
         </div>
     </div>
-    <div class="section-block">
-        <div class="laptime-card">
-            <div id="lapPole"></div>
-            <div id="lapFastest" style="display:none"></div>
+    <div class="section-block" data-page-node-id="S68AC9OTEmCO6Udb5tqZLb">
+        <div class="laptime-card" data-page-node-id="KqSLFi99wjuMYdbc96W8RB">
+            <div id="lapPole" data-page-node-id="AnjjFkHvvt0tAQWV04l1Ac"></div>
+            <div id="lapFastest" style="display:none" data-page-node-id="mZT11NZcrJtQS3JRhgYLtt"></div>
         </div>
-        <div class="meta-bottom" id="lapTimeMeta">Hungarian GP</div>
+        <div class="meta-bottom" id="lapTimeMeta" data-page-node-id="StRBeW09Fg6pXbcEKLraDG">Hungarian GP</div>
     </div>
 </section>
 
 <!-- Predictions + WDC (Tabbed) -->
-<section class="container fade-in">
-    <div class="section-header">
-        <div class="section-title">PREDICTION</div>
-        <div class="tab-bar">
-            <button class="tab-btn active" onclick="switchTab('race')">RACE</button>
-            <button class="tab-btn" onclick="switchTab('wdc')">WDC</button>
+<section class="container fade-in" data-page-node-id="idMD9uz3w2CwaPVfOmAN5K">
+    <div class="section-header" data-page-node-id="RtvF46lqrSy8PWHdx6H1Nq">
+        <div class="section-title" data-page-node-id="CD0B02M9CtyUBMyPDFB1Kv">PREDICTION</div>
+        <div class="tab-bar" data-page-node-id="6x2wJPguBgCiImA5Uf1BtD">
+            <button class="tab-btn active" onclick="switchTab('race')" data-page-node-id="BWG13dLpZnkyRDrDR0oFgt">RACE</button>
+            <button class="tab-btn" onclick="switchTab('wdc')" data-page-node-id="lNn48aYeCcdcNwF4izBByF">WDC</button>
         </div>
     </div>
 
         </div>
     </div>
 
-    <div class="api-bar" style="margin-bottom:8px">
-        <span class="api-status" id="apiStatus">API Key required</span>
-        <button class="api-btn api-settings-btn" onclick="toggleApiSettings()" title="Settings">⚙</button>
+    <div class="api-bar" style="margin-bottom:8px" data-page-node-id="HHjX5C6pPaHmngd6AvFlp7">
+        <span class="api-status" id="apiStatus" data-page-node-id="oadt4icrbxTLlDYbkg57nb">API Key required</span>
+        <button class="api-btn api-settings-btn" onclick="toggleApiSettings()" title="Settings" data-page-node-id="tbaFOR0Ds6yXTM6hP31WXs">⚙</button>
     </div>
-    <div class="api-settings-panel" id="apiSettings" style="display:none">
-        <div class="api-row"><label>Provider</label><select id="aiProvider"><option value="deepseek">DeepSeek</option><option value="kimi">Kimi (Moonshot)</option><option value="zhipu">Zhipu (GLM)</option></select></div>
-        <div class="api-row"><label>API Key</label><input type="password" id="aiKey" placeholder="sk-..."></div>
-        <div class="api-row"><label>Model</label><input type="text" id="aiModel" placeholder="Auto (provider default)"></div>
-        <div class="api-row api-actions"><button class="api-btn api-save-btn" onclick="saveApiKey()">Save</button><span class="api-hint" id="apiHint">Saved locally</span></div>
+    <div class="api-settings-panel" id="apiSettings" style="display:none" data-page-node-id="jzaMmUJACLp9lI4Fp1AeHh">
+        <div class="api-row" data-page-node-id="RDapWqB9gra5vmgG1KcDBk"><label data-page-node-id="zg5CrtvcVTuZoKfuhsFOEx">Provider</label><select id="aiProvider" data-page-node-id="lEmdVW1ElBVwmnfZ6mLyQz"><option value="deepseek" data-page-node-id="cIoiL49DmZ2bh4y12CMZt0">DeepSeek</option><option value="kimi" data-page-node-id="OkG9y7b6rNXUcizllrzeg3">Kimi (Moonshot)</option><option value="zhipu" data-page-node-id="viyo96MQcdkRnA62HCaVaf">Zhipu (GLM)</option></select></div>
+        <div class="api-row" data-page-node-id="rc7ptsdLv17OIIhaWhEEk2"><label data-page-node-id="mc8FIb08oZeYpaB2bGAoxA">API Key</label><input type="password" id="aiKey" placeholder="sk-..." data-page-node-id="yhTss2lUAj2uwaCI3ZoWVB"></div>
+        <div class="api-row" data-page-node-id="6EYRED4W5iP0m8F5iKwFG0"><label data-page-node-id="GfYEDfxhp2M88c9tm3CtCh">Model</label><input type="text" id="aiModel" placeholder="Auto (provider default)" data-page-node-id="oVBb5HEVrZS5voLIxDIYcV"></div>
+        <div class="api-row api-actions" data-page-node-id="kLeBbxGobEE1HVgJ0nD4ef"><button class="api-btn api-save-btn" onclick="saveApiKey()" data-page-node-id="sBMVlgE9m4ExlKWL0CFGk2">Save</button><span class="api-hint" id="apiHint" data-page-node-id="a0wcAZHwCMYDkNF2pl1pUF">Saved locally</span></div>
     </div>
 
-    <div class="tab-content active" id="tab-race">
-        <div class="section-block">
-            <div class="podium-prediction">
-                <div class="podium-stars">
-                    <div class="pred-inline-header">
-                        <h3>STARS TO WATCH</h3>
-                        <button class="pred-ai-btn race-ai-btn" id="raceAiBtn" onclick="runRacePredict()">AI Predict</button>
+    <div class="tab-content active" id="tab-race" data-page-node-id="TI5XAMTWqa10TzxciqPKYM">
+        <div class="section-block" data-page-node-id="L1Nn20CwdUPm5Tz5wF244W">
+            <div class="podium-prediction" data-page-node-id="fpJrwAXnEl9EMF0EC8rGY7">
+                <div class="podium-stars" data-page-node-id="SDhja0t4Z8vxbaFGhSm2lH">
+                    <div class="pred-inline-header" data-page-node-id="U8f8eIW1IXFaOYwv7G8jTl">
+                        <h3 data-page-node-id="gpL6QfnYv8AEpSoo7wILAw">STARS TO WATCH</h3>
+                        <button class="pred-ai-btn race-ai-btn" id="raceAiBtn" onclick="runRacePredict()" data-page-node-id="CYfnuODv63G1DS5HT8TXp2">AI Predict</button>
                     </div>
-                    <div id="starDrivers"></div>
+                    <div id="starDrivers" data-page-node-id="5WOQNvwm8OVRCFoBrKgmeN"></div>
                 </div>
-                <div class="podium-blocks-area">
-                    <div class="pred-inline-header">
-                        <h3>PREDICTED PODIUM</h3>
+                <div class="podium-blocks-area" data-page-node-id="XjlvMOBk6njR2S3vdbiz0P">
+                    <div class="pred-inline-header" data-page-node-id="Epugc5AR3Q5uunP0wtFtff">
+                        <h3 data-page-node-id="cHLrvRFLHexVgDklAimSpn">PREDICTED PODIUM</h3>
                     </div>
-                <div class="podium-blocks">
-                    <div class="podium-slot">
-                        <div class="podium-block podium-1">P1</div>
-                        <div class="podium-driver-name-top"></div>
-                        <div class="podium-prob-top"></div>
+                <div class="podium-blocks" data-page-node-id="trpUGos3mrsH5Hojcb9gjX">
+                    <div class="podium-slot" data-page-node-id="Yan1UeFO9vuBdZcws6lcy3">
+                        <div class="podium-block podium-1" data-page-node-id="x7DFyHSCU269Nl9nFaIe7y">P1</div>
+                        <div class="podium-driver-name-top" data-page-node-id="kgz5gae3RXRqm2cC8rJJbT"></div>
+                        <div class="podium-prob-top" data-page-node-id="PXeFcKPlFkEquDNU0xrAt7"></div>
                     </div>
-                    <div class="podium-slot">
-                        <div class="podium-block podium-2">P2</div>
-                        <div class="podium-driver-name-top"></div>
-                        <div class="podium-prob-top"></div>
+                    <div class="podium-slot" data-page-node-id="1VyRUwxIUt8GFNDk7jzB1I">
+                        <div class="podium-block podium-2" data-page-node-id="cWUGXOdMQuoxN6JymaxmDd">P2</div>
+                        <div class="podium-driver-name-top" data-page-node-id="O7BnHO2LYSC6vhX42TiCcv"></div>
+                        <div class="podium-prob-top" data-page-node-id="PDLaxwnWfOLONzbphIPyjq"></div>
                     </div>
-                    <div class="podium-slot">
-                        <div class="podium-block podium-3">P3</div>
-                        <div class="podium-driver-name-top"></div>
-                        <div class="podium-prob-top"></div>
+                    <div class="podium-slot" data-page-node-id="qOZleqhnoP0WtJqxtdSd6W">
+                        <div class="podium-block podium-3" data-page-node-id="N7REkBYR1AweBkLfFf76g8">P3</div>
+                        <div class="podium-driver-name-top" data-page-node-id="bdXHGEFRtbZpaCDyIIvPcw"></div>
+                        <div class="podium-prob-top" data-page-node-id="mhyvWcG4YBMU5zDy5LDmiJ"></div>
                     </div>
                 </div>
                 </div>
             </div>
-            <div class="meta-bottom">Dutch Grand Prix · AI Prediction</div>
+            <div class="meta-bottom" data-page-node-id="XcOPcqhvTzmvUPyOffYhjS">Dutch Grand Prix · AI Prediction</div>
         </div>
     </div>
 
-    <div class="tab-content" id="tab-wdc">
-        <div class="section-block">
-            <div class="pred-inline-header" style="justify-content:flex-end">
-                <button class="pred-ai-btn wdc-ai-btn" onclick="runWDCPredict()">AI Predict</button>
+    <div class="tab-content" id="tab-wdc" data-page-node-id="1ZD3Cvc0j9ay8eJwSEDbBn">
+        <div class="section-block" data-page-node-id="I1ba4bRnhcCuGMufpZC8tq">
+            <div class="pred-inline-header" style="justify-content:flex-end" data-page-node-id="WmiGlxfEMKV3rfol1T6YLM">
+                <button class="pred-ai-btn wdc-ai-btn" onclick="runWDCPredict()" data-page-node-id="22lLcWF7NYeqKnXUd2JOjh">AI Predict</button>
             </div>
-            <div class="wdc-row">
-                <div class="wdc-inner-card">
-                    <div class="wdc-inner-left" id="wdcFeasibilityCard"></div>
-                    <div class="wdc-inner-right" id="wdcProbCard"></div>
+            <div class="wdc-row" data-page-node-id="Lf1318qiIuc2SzRCyf0lWZ">
+                <div class="wdc-inner-card" data-page-node-id="rLXi3LvGXvIm7e0Is1uzBG">
+                    <div class="wdc-inner-left" id="wdcFeasibilityCard" data-page-node-id="PycQAraMJgfN8PPuYjCH7G"></div>
+                    <div class="wdc-inner-right" id="wdcProbCard" data-page-node-id="jsuOiFl2Yzyf51iGFAL47S"></div>
                 </div>
-                <div id="wdcLegend" class="wdc-legend"></div>
+                <div id="wdcLegend" class="wdc-legend" data-page-node-id="zXUQuXV4RIBC6pXa9lKU89"></div>
             </div>
-            <div class="meta-bottom" id="wdcMeta">Hungarian GP · After Round 11</div>
+            <div class="meta-bottom" id="wdcMeta" data-page-node-id="kaLsHDadNC9DyHCNdSPoCw">Hungarian GP · After Round 11</div>
         </div>
     </div>
 </section>
 
 <!-- Footer -->
-<div class="footer">
-    <p>F1 Season Dashboard · Data from FastF1 · <span id="footer-update">Loading...</span></p>
-    <p style="margin-top:4px;">Predictions are AI-generated estimates based on qualifying data, championship standings & historical track performance</p>
+<div class="footer" data-page-node-id="6zWkk4zPZyAa7OGDYWz6bv">
+    <p data-page-node-id="SgPXsyLfBoTMbdACeEOagp">F1 Season Dashboard · Data from FastF1 · <span id="footer-update" data-page-node-id="3rooN9kX2s6MorNqGLb5A5">Loading...</span></p>
+    <p style="margin-top:4px;" data-page-node-id="lEHhNP67RYzufMrkGEBoYs">Predictions are AI-generated estimates based on qualifying data, championship standings & historical track performance</p>
 </div>
 
 <script>
@@ -2120,6 +2161,17 @@ function refreshData() {
     loadData();
 }
 
+function toggleLeftStack() {
+    const stack = document.querySelector('.left-side-stack');
+    const btn = document.querySelector('.floating-collapse');
+    if (!stack || !btn) return;
+    const isCollapsed = stack.classList.toggle('collapsed');
+    try { localStorage.setItem('f1-dash-left-collapsed', isCollapsed ? '1' : '0'); } catch (e) {}
+    const label = isCollapsed ? 'Expand panel' : 'Collapse panel';
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+}
+
 function autoDetectSession() {
     if (!appData || !appData.event) { currentSession = 'race'; return; }
     const now = new Date();
@@ -2160,7 +2212,11 @@ function renderResults() {
     const isQuali = currentSession === 'qualifying';
 
     document.getElementById('resultTitle').textContent = 'RESULTS';
-    document.getElementById('resultMeta').textContent = appData ? (appData.event.eventName || '') : '';
+    // Label with the event the shown results actually belong to (fallback source
+    // when the data was carried over from the last completed round)
+    const rsrc = appData ? ((currentSession === 'qualifying' ? appData.qualiSource : appData.raceSource) || null) : null;
+    document.getElementById('resultMeta').textContent =
+        (rsrc && rsrc.eventName) || (appData ? (appData.event.eventName || '') : '');
 
     // Session tab highlight
     document.querySelectorAll('#sessionTabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -2370,6 +2426,10 @@ function getDeltaColor(seconds) {
 
 // Bottom-right meta text for the LAP TIME card — derived from event data
 function getLapMeta() {
+    // When quali data was carried over from the last completed round, label the
+    // LAP TIME cards with that event instead of the active weekend's event
+    const qs = appData && appData.qualiSource;
+    if (qs && qs.eventName) return qs.eventName;
     const ev = (appData && appData.event) ? appData.event : (FALLBACK_DATA ? FALLBACK_DATA.event : null);
     return ev ? (ev.eventName || ev.country || 'F1') : 'F1';
 }
@@ -2459,7 +2519,10 @@ function renderLapTimeCard() {
 }
 
 function renderPoleLapCard() {
-    const pole = (appData && appData.poleLap) ? appData.poleLap : LAP_SAMPLE.pole;
+    // Require a real driver before treating appData.poleLap as populated —
+    // when data.json has no quali results, poleLap is `{}` (truthy but empty),
+    // so fall back to the embedded sample to avoid rendering blank fields.
+    const pole = (appData && appData.poleLap && appData.poleLap.driver) ? appData.poleLap : LAP_SAMPLE.pole;
     const tc = getTeamColor(pole.team);
 
     // GAP to P2 — pole's lead margin, always green (absolute value, since pole is always ahead)
@@ -2543,7 +2606,7 @@ function renderPoleLapCard() {
 }
 
 function renderFastestLapCard() {
-    const fastest = (appData && appData.fastestLap) ? appData.fastestLap : LAP_SAMPLE.fastest;
+    const fastest = (appData && appData.fastestLap && appData.fastestLap.driver) ? appData.fastestLap : LAP_SAMPLE.fastest;
     // Guard: incomplete sector data (e.g. race just finished and FastF1 hasn't populated sectors yet)
     if (!fastest.sectors || fastest.sectors.s1 === undefined) {
         document.getElementById('lapFastest').innerHTML = ltUnavailableMarkup('Fastest lap data unavailable');
@@ -2639,24 +2702,28 @@ function renderAll() {
 }
 
 function updateAllMeta() {
-    const rnd = appData ? 'After Round ' + (appData.event.round || '11') : '';
-    const evt = appData ? (appData.event.eventName || '') : '';
     const nextEv = window._currentEvent;
-    const nextName = nextEv ? nextEv.eventName + ' · AI Prediction' : evt + ' · AI Prediction';
+    const nextName = nextEv ? nextEv.eventName + ' · AI Prediction' : ((appData && appData.event && appData.event.eventName) || '') + ' · AI Prediction';
 
-    // Results meta
+    // Results meta — label with the event the shown results belong to
+    const rsrc = appData ? ((currentSession === 'qualifying' ? appData.qualiSource : appData.raceSource) || null) : null;
+    const evt = (rsrc && rsrc.eventName) || (appData ? (appData.event.eventName || '') : '');
     const rm = document.getElementById('resultMeta');
     if (rm) rm.textContent = evt;
-    // Standings metas
+
+    // Standings / WDC metas — reference the last completed round (race source)
+    const rs = appData ? (appData.raceSource || null) : null;
+    const rnd = 'After Round ' + ((rs && rs.round) || (appData ? appData.event.round : '11'));
+    const sEvt = (rs && rs.eventName) || (appData ? (appData.event.eventName || '') : '');
     document.querySelectorAll('#tab-drivers .meta-bottom, #tab-constructors .meta-bottom').forEach(m => {
-        m.textContent = rnd + ' · ' + evt;
+        m.textContent = rnd + ' · ' + sEvt;
     });
     // Race prediction meta
     const rpm = document.querySelector('#tab-race .meta-bottom');
     if (rpm) rpm.textContent = nextName;
     // WDC meta
     const wm = document.getElementById('wdcMeta');
-    if (wm) wm.textContent = evt + ' · ' + rnd;
+    if (wm) wm.textContent = sEvt + ' · ' + rnd;
 }
 
 // ====== HERO + TIMELINE ======
@@ -3040,12 +3107,17 @@ async function callAI(prompt) {
     }
 }
 
-function makeContext() {
-    const dr = appData ? appData.event.round : '11';
+function makeContext(forWdc) {
+    // Reference the round the data actually comes from: raceSource for WDC
+    // (standings accumulate through completed races), qualiSource for race
+    // predictions (quali is the fresh signal).
+    const src = forWdc ? (appData && appData.raceSource) : (appData && appData.qualiSource);
+    const dr = (src && src.round) || (appData ? appData.event.round : '11');
     const cr = window._currentEvent ? window._currentEvent.round : '12';
     const over = dr !== cr;
+    const drName = (src && src.eventName) || (appData && appData.event && appData.event.eventName) || '';
     return over
-        ? `Round ${dr} (${appData?.event?.eventName||''}) is COMPLETED. Predict Round ${cr} (${window._currentEvent?.eventName||''}).`
+        ? `Round ${dr} (${drName}) is COMPLETED. Predict Round ${cr} (${window._currentEvent?.eventName||''}).`
         : `Round ${cr} is the NEXT upcoming race.`;
 }
 
@@ -3060,7 +3132,8 @@ async function runRacePredict() {
             quali: ((appData&&appData.qualifying)?appData.qualifying.slice(0,10).map(q=>({pos:q.pos,name:q.name,team:q.team,q3:q.q3})):[]),
             track: window._currentEvent ? (window._currentEvent.circuit||'')+', '+(window._currentEvent.country||'')+' ('+(window._currentEvent.format||'')+')' : ''
         };
-        const prompt = `F1 2026 data:\n${makeContext()}\n\nStandings: ${JSON.stringify(info.stand)}\nQualifying (R${appData?.event?.round||''}): ${JSON.stringify(info.quali)}\nNext Track: ${info.track}\n\nReturn ONLY JSON:\n{"podium":[{"name":"","team":"","prob":0},...3 drivers],"stars":[{"name":"","team":"","reason":"Detailed Chinese reason (20-30 chars)"},...exactly 4 drivers]}`;
+        const qualiRound = (appData && appData.qualiSource && appData.qualiSource.round) || (appData && appData.event && appData.event.round) || '';
+        const prompt = `F1 2026 data:\n${makeContext()}\n\nStandings: ${JSON.stringify(info.stand)}\nQualifying (R${qualiRound}): ${JSON.stringify(info.quali)}\nNext Track: ${info.track}\n\nReturn ONLY JSON:\n{"podium":[{"name":"","team":"","prob":0},...3 drivers],"stars":[{"name":"","team":"","reason":"Detailed Chinese reason (20-30 chars)"},...exactly 4 drivers]}`;
 
         const p = await callAI(prompt);
         window._aiPodium = p.podium || [];
@@ -3082,7 +3155,8 @@ async function runWDCPredict() {
             stand: ((appData&&appData.standings&&appData.standings.drivers)?appData.standings.drivers.slice(0,10):[]),
             track: window._currentEvent ? window._currentEvent.eventName+' R'+window._currentEvent.round : ''
         };
-        const prompt = `F1 2026 data:\n${makeContext()}\n\nStandings: ${JSON.stringify(info.stand)}\nRemaining races after Round ${appData?.event?.round||'11'}: ${22-parseInt(appData?.event?.round||'11')}\n\nReturn ONLY JSON:\n{"wdc":[{"name":"","team":"","prob":0,"reason":"Chinese reason (20-35 Chinese characters, eg. 赛季6胜积分领先且剩余赛道均为优势赛道)"},...exactly 5 drivers]}\n\nIMPORTANT: prob MUST be an integer 1-100 (NOT 0-1 decimal). reason MUST be between 20 and 35 Chinese characters.`;
+        const wdcBase = (appData && appData.raceSource && appData.raceSource.round) || (appData && appData.event && appData.event.round) || '11';
+        const prompt = `F1 2026 data:\n${makeContext(true)}\n\nStandings: ${JSON.stringify(info.stand)}\nRemaining races after Round ${wdcBase}: ${22-parseInt(wdcBase)}\n\nReturn ONLY JSON:\n{"wdc":[{"name":"","team":"","prob":0,"reason":"Chinese reason (20-35 Chinese characters, eg. 赛季6胜积分领先且剩余赛道均为优势赛道)"},...exactly 5 drivers]}\n\nIMPORTANT: prob MUST be an integer 1-100 (NOT 0-1 decimal). reason MUST be between 20 and 35 Chinese characters.`;
 
         const p = await callAI(prompt);
         window._aiWdc = p.wdc || [];
@@ -3165,11 +3239,13 @@ function applyWDCPrediction() {
 // ====== PLACEHOLDERS ======
 function hasQualifyingForPrediction() {
     if (!appData) return false;
-    const curEv = findCurrentEvent();
-    const dataRound = String(appData.event.round || '');
-    const curRound = curEv.round;
-    // Inside this GP weekend OR waiting for next GP — match data round to current event round
-    return dataRound === curRound && appData.qualifying && appData.qualifying.length > 0;
+    // RACE PREDICTION only unlocks once THIS weekend's qualifying has produced
+    // results. Carried-over qualifying data from a previous round (qualiSource)
+    // does not count — the RACE PREDICTION section must stay blank in the
+    // window between a new weekend opening and that weekend's qualifying
+    // finishing, even if we have last weekend's quali in the data.
+    if (appData.qualiSource) return false;
+    return !!(appData.qualifying && appData.qualifying.length > 0);
 }
 
 function emptyBlock(icon, text) {
@@ -3312,6 +3388,19 @@ function initHeroTilt() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Restore left panel collapse state before first paint of interactive UI
+    try {
+        if (localStorage.getItem('f1-dash-left-collapsed') === '1') {
+            const stack = document.querySelector('.left-side-stack');
+            const btn = document.querySelector('.floating-collapse');
+            if (stack) stack.classList.add('collapsed');
+            if (btn) {
+                btn.title = 'Expand panel';
+                btn.setAttribute('aria-label', 'Expand panel');
+            }
+        }
+    } catch (e) {}
+
     loadData();
     loadApiSettings();
     setInterval(updateCountdownDisplay, 1000);
