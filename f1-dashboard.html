@@ -1336,10 +1336,35 @@
         @media (max-width: 768px) { .sched-wrap { grid-template-columns: 1fr; } }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .hero-inner { flex-direction: column; align-items: flex-start; }
+        /* Intermediate breakpoint: when horizontal space gets tight (hero-left 420 + gap 30 + hero-stage 320 = 770, plus padding 80),
+           switch to column layout so the card keeps its 320px design width instead of being squeezed.
+           IMPORTANT: in column flex, flex-basis sets HEIGHT (not width), and .hero-stage's children are all
+           position:absolute so they contribute 0 intrinsic width — width must be set explicitly. */
+        @media (max-width: 900px) {
+            .hero-inner { flex-direction: column; align-items: flex-start; gap: 22px; }
             .hero-left { flex: 0 0 auto; width: 100%; max-width: 100%; }
-            .hero-stage { flex: 1 1 auto; width: 100%; max-width: 100%; }
+            .hero-stage {
+                /* In column flex: flex controls HEIGHT; width must be set explicitly. */
+                flex: 0 0 320px;
+                width: 320px;
+                max-width: 320px;
+                align-self: flex-start;
+            }
+            .hero-title { font-size: clamp(22px, 5vw, 36px); -webkit-line-clamp: 3; }
+        }
+
+        /* On truly narrow phones (< 380px), the 320px card can't fit alongside 40px of hero padding.
+           Let it shrink to fill available width so the layout doesn't overflow horizontally. */
+        @media (max-width: 380px) {
+            .hero-stage {
+                width: 100%;
+                max-width: 100%;
+                flex: 0 0 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Hero already handled by the 900px breakpoint above; don't force the card to 100% width here. */
             .hero-title { font-size: clamp(21px, 7vw, 30px); -webkit-line-clamp: 3; }
             .grid-2 { grid-template-columns: 1fr; }
             .grid-3 { grid-template-columns: 1fr; }
