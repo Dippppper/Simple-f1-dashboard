@@ -1131,6 +1131,7 @@
             backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: 24px 22px;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
         .timeline {
             display: flex;
@@ -1396,19 +1397,6 @@
                 width: 220px;
                 height: 220px;
             }
-
-            .timeline-float {
-                position: static;
-                transform: none;
-                margin: 20px auto;
-                max-width: 400px;
-            }
-            .floating-countdown { display: none; }
-            .timeline {
-                flex-direction: row;
-                justify-content: center;
-                gap: 16px;
-            }
         }
 
         /* Scroll animations */
@@ -1422,7 +1410,6 @@
             transform: translateY(0);
         }
 
-        /* Left side stack: countdown on top, (timeline + refresh) below */
         .left-side-stack {
             position: fixed;
             left: 20px;
@@ -1442,6 +1429,7 @@
             align-items: flex-start;
             gap: 8px;
             width: 188px;
+            transition: width 0.2s ease;
         }
         /* When inside left-side-stack, timeline-float shouldn't be fixed */
         .left-side-stack .timeline-float {
@@ -1450,6 +1438,7 @@
             top: auto !important;
             margin: 0;
             flex: 1;
+            min-width: 0; /* allow flex item to truly collapse to 0px so buttons hug the left edge when collapsed */
         }
         .floating-countdown {
             width: 188px;
@@ -1461,14 +1450,14 @@
             animation: cardFlow 8s linear infinite;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             opacity: 0;
-            transform: translateY(-10px);
-            pointer-events: auto; /* changed from none: card needs hover to flip to round/GP info */
+            transform: translate(0, -10px);
+            pointer-events: auto;
             position: relative;
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
         .floating-countdown.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(0, 0);
         }
         .floating-refresh {
             width: 42px;
@@ -1518,13 +1507,27 @@
             flex-shrink: 0;
         }
         .floating-collapse:hover { color: #E10600; background: var(--gray-5); }
-        .floating-collapse svg { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        /* When panel is collapsed, chevron flips to point right (= "expand right to reveal panel") */
-        .left-side-stack.collapsed .floating-collapse svg { transform: rotate(180deg); }
-        /* Collapsed state: hide the heavy panels, shrink the row so the buttons hug the left edge */
-        .left-side-stack.collapsed .floating-countdown,
-        .left-side-stack.collapsed .timeline-float { display: none; }
-        .left-side-stack.collapsed .left-side-row { width: auto; }
+        /* Two button stacks: one for expanded state, one for collapsed state.
+           Each collapse button has a fixed chevron direction (left = collapse,
+           right = expand), so no rotation animation is needed. */
+        .floating-actions-collapsed { display: none; }
+        /* When panel is collapsed, swap which button stack is visible. */
+        .left-side-stack.collapsed .floating-actions { display: none; }
+        .left-side-stack.collapsed .floating-actions-collapsed { display: flex; transform: translateY(80px); }
+        /* Collapsed state: slide panels off to the left edge + fade out,
+           and shrink the row width to the buttons' 42px so they hug the left edge. */
+        .left-side-stack.collapsed .floating-countdown {
+            opacity: 0;
+            transform: translate(-220px, 0);
+            pointer-events: none;
+        }
+        .left-side-stack.collapsed .timeline-float {
+            opacity: 0;
+            transform: translateX(-220px) !important;
+            pointer-events: none;
+        }
+        .left-side-stack.collapsed { gap: 0; }
+        .left-side-stack.collapsed .left-side-row { width: 42px; gap: 0; align-items: center; }
         .floating-cd-label {
             font-size: 10px;
             font-weight: 600;
@@ -1705,6 +1708,21 @@
         </div>
     </div>
     <div class="left-side-row" data-page-node-id="8oH0o5NrLEIDIJNUVyZgcd">
+        <!-- Collapsed-state button stack: shows when .left-side-stack.collapsed.
+             Uses chevron-right icon (fixed direction, no rotation needed). -->
+        <div class="floating-actions floating-actions-collapsed" data-page-node-id="cOllapsedBtnStack">
+            <button class="floating-refresh" onclick="refreshData()" title="Refresh data" aria-label="Refresh data" data-page-node-id="cOllapsedRefresh">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="cOllapsedRefreshSvg">
+                    <path d="M21 12a9 9 0 1 1-3-6.7L21 8" data-page-node-id="cOllapsedRefreshPath"/>
+                    <polyline points="21 3 21 8 16 8" data-page-node-id="cOllapsedRefreshPoly"/>
+                </svg>
+            </button>
+            <button class="floating-collapse" onclick="toggleLeftStack()" title="Expand panel" aria-label="Expand panel" data-page-node-id="cOllapsedToggle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="cOllapsedToggleSvg">
+                    <polyline points="9 18 15 12 9 6" data-page-node-id="cOllapsedTogglePoly"/>
+                </svg>
+            </button>
+        </div>
         <div class="timeline-float" data-page-node-id="aXIohKknlTpjTtus2h8y6L">
             <div class="timeline" id="timelineList" data-page-node-id="WSH66sKzpJdrz4wyhLaTrT"></div>
         </div>
@@ -1881,7 +1899,7 @@
 
 <!-- Footer -->
 <div class="footer" data-page-node-id="6zWkk4zPZyAa7OGDYWz6bv">
-    <p data-page-node-id="SgPXsyLfBoTMbdACeEOagp">F1 Season Dashboard · Data from FastF1 · <span id="footer-update" data-page-node-id="3rooN9kX2s6MorNqGLb5A5">Loading...</span></p>
+    <p data-page-node-id="SgPXsyLfBoTMbdACeEOagp">F1 Dashboard · Data from FastF1 · <span id="footer-update" data-page-node-id="3rooN9kX2s6MorNqGLb5A5">Loading...</span></p>
     <p style="margin-top:4px;" data-page-node-id="lEHhNP67RYzufMrkGEBoYs">Predictions are AI-generated estimates based on qualifying data, championship standings & historical track performance</p>
 </div>
 
@@ -2163,13 +2181,9 @@ function refreshData() {
 
 function toggleLeftStack() {
     const stack = document.querySelector('.left-side-stack');
-    const btn = document.querySelector('.floating-collapse');
-    if (!stack || !btn) return;
+    if (!stack) return;
     const isCollapsed = stack.classList.toggle('collapsed');
     try { localStorage.setItem('f1-dash-left-collapsed', isCollapsed ? '1' : '0'); } catch (e) {}
-    const label = isCollapsed ? 'Expand panel' : 'Collapse panel';
-    btn.title = label;
-    btn.setAttribute('aria-label', label);
 }
 
 function autoDetectSession() {
@@ -3392,12 +3406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         if (localStorage.getItem('f1-dash-left-collapsed') === '1') {
             const stack = document.querySelector('.left-side-stack');
-            const btn = document.querySelector('.floating-collapse');
             if (stack) stack.classList.add('collapsed');
-            if (btn) {
-                btn.title = 'Expand panel';
-                btn.setAttribute('aria-label', 'Expand panel');
-            }
         }
     } catch (e) {}
 
