@@ -1301,7 +1301,7 @@
         .sched-date { flex: 0 0 56px; text-align: right; font-size: 12px; color: var(--gray-4); padding-top: 8px; white-space: nowrap; }
         .sched-node { flex: 0 0 30px; display: flex; justify-content: center; position: relative; z-index: 1; }
         .sched-node span {
-            width: 30px; height: 30px; border-radius: 50%;
+            width: 30px; height: 30px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
         }
@@ -1322,10 +1322,10 @@
         }
         .sched-item.next .sched-name { color: #fff; font-weight: 700; }
         .sched-item.next .sched-sub { color: var(--gray-3); }
-        .sched-item.upcoming .sched-node span { background: var(--gray-7); border: 1.5px solid var(--gray-5); color: var(--gray-2); }
+        .sched-item.upcoming .sched-node span { background: var(--gray-6); color: var(--gray-1); }
         .sched-item.upcoming .sched-name { color: var(--gray-1); }
         .sched-item.upcoming:hover .sched-name { color: #fff; }
-        .sched-item.upcoming:hover .sched-node span { border-color: rgba(225,6,0,0.7); }
+        .sched-item.upcoming:hover .sched-node span { background: var(--gray-5); }
         .sched-month { display: flex; align-items: center; padding: 14px 0 10px; position: relative; }
         .sched-month::before { content: ''; position: absolute; left: 85px; top: -14px; height: calc(100% + 28px); width: 2px; background: var(--gray-6); }
         .sched-month:first-child::before { top: 0; height: 100%; }
@@ -1437,6 +1437,7 @@
             margin: 0;
             flex: 1;
             min-width: 0; /* allow flex item to truly collapse to 0px so buttons hug the left edge when collapsed */
+            transition: transform 0.35s cubic-bezier(0, 0, 0.2, 1), opacity 0.3s ease;
         }
         .floating-countdown {
             width: 188px;
@@ -1505,19 +1506,48 @@
             flex-shrink: 0;
         }
         .floating-collapse:hover { color: #E10600; background: var(--gray-5); }
-        /* Two button stacks: one for expanded state, one for collapsed state.
-           Each collapse button has a fixed chevron direction (left = collapse,
-           right = expand), so no rotation animation is needed. */
-        .floating-actions-collapsed { display: none; }
-        /* When panel is collapsed, swap which button stack is visible. */
-        .left-side-stack.collapsed .floating-actions { display: none; }
-        .left-side-stack.collapsed .floating-actions-collapsed { display: flex; transform: translateY(80px); }
-        /* Collapsed state: hide panels instantly (no animation) and shrink
-           the row width to the buttons' 42px so they hug the left edge. */
-        .left-side-stack.collapsed .floating-countdown { display: none; }
-        .left-side-stack.collapsed .timeline-float { display: none; }
-        .left-side-stack.collapsed { gap: 0; }
-        .left-side-stack.collapsed .left-side-row { width: 42px; gap: 0; align-items: center; }
+        /* Collapse animation — panels accelerate off-screen and fade, then the
+           buttons follow to the left edge (two-stage exit). Expanding reverses
+           the order: buttons return first with no delay, panels slide back in. */
+        .left-side-stack .floating-actions {
+            transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+        }
+        /* timeline (138px) + gap (8px): moves the 42px buttons from the row's
+           right side to the screen's left edge */
+        .left-side-stack.collapsed .floating-actions {
+            transform: translateX(-146px);
+            transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1) 0.24s;
+        }
+        .left-side-stack.collapsed .floating-countdown {
+            transform: translateX(calc(-100% - 42px));
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
+                        opacity 0.28s ease-in,
+                        visibility 0s linear 0.3s;
+        }
+        .left-side-stack.collapsed .timeline-float {
+            transform: translateX(calc(-100% - 42px)) !important;
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
+                        opacity 0.28s ease-in,
+                        visibility 0s linear 0.3s;
+        }
+        /* Single button stack: chevron rotates instead of swapping stacks */
+        .floating-collapse svg { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .left-side-stack.collapsed .floating-collapse svg { transform: rotate(180deg); }
+        /* Restoring the collapsed state from localStorage must not replay the animation */
+        .left-side-stack.no-anim .floating-countdown,
+        .left-side-stack.no-anim .timeline-float,
+        .left-side-stack.no-anim .floating-actions,
+        .left-side-stack.no-anim .floating-collapse svg { transition: none !important; }
+        @media (prefers-reduced-motion: reduce) {
+            .left-side-stack .floating-countdown,
+            .left-side-stack .timeline-float,
+            .left-side-stack .floating-actions,
+            .floating-collapse svg { transition: none !important; }
+        }
         .floating-cd-label {
             font-size: 10px;
             font-weight: 600;
@@ -1698,21 +1728,6 @@
         </div>
     </div>
     <div class="left-side-row" data-page-node-id="8oH0o5NrLEIDIJNUVyZgcd">
-        <!-- Collapsed-state button stack: shows when .left-side-stack.collapsed.
-             Uses chevron-right icon (fixed direction, no rotation needed). -->
-        <div class="floating-actions floating-actions-collapsed" data-page-node-id="cOllapsedBtnStack">
-            <button class="floating-refresh" onclick="refreshData()" title="Refresh data" aria-label="Refresh data" data-page-node-id="cOllapsedRefresh">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="cOllapsedRefreshSvg">
-                    <path d="M21 12a9 9 0 1 1-3-6.7L21 8" data-page-node-id="cOllapsedRefreshPath"/>
-                    <polyline points="21 3 21 8 16 8" data-page-node-id="cOllapsedRefreshPoly"/>
-                </svg>
-            </button>
-            <button class="floating-collapse" onclick="toggleLeftStack()" title="Expand panel" aria-label="Expand panel" data-page-node-id="cOllapsedToggle">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="cOllapsedToggleSvg">
-                    <polyline points="9 18 15 12 9 6" data-page-node-id="cOllapsedTogglePoly"/>
-                </svg>
-            </button>
-        </div>
         <div class="timeline-float" data-page-node-id="aXIohKknlTpjTtus2h8y6L">
             <div class="timeline" id="timelineList" data-page-node-id="WSH66sKzpJdrz4wyhLaTrT"></div>
         </div>
@@ -2173,6 +2188,12 @@ function toggleLeftStack() {
     const stack = document.querySelector('.left-side-stack');
     if (!stack) return;
     const isCollapsed = stack.classList.toggle('collapsed');
+    const btn = stack.querySelector('.floating-actions .floating-collapse');
+    if (btn) {
+        const label = isCollapsed ? 'Expand panel' : 'Collapse panel';
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+    }
     try { localStorage.setItem('f1-dash-left-collapsed', isCollapsed ? '1' : '0'); } catch (e) {}
 }
 
@@ -3319,11 +3340,20 @@ function initHeroTilt() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Restore left panel collapse state before first paint of interactive UI
+    // Restore left panel collapse state before first paint of interactive UI.
+    // no-anim: skip the slide-out transition when restoring, then re-enable it.
     try {
         if (localStorage.getItem('f1-dash-left-collapsed') === '1') {
             const stack = document.querySelector('.left-side-stack');
-            if (stack) stack.classList.add('collapsed');
+            if (stack) {
+                stack.classList.add('collapsed', 'no-anim');
+                const btn = stack.querySelector('.floating-actions .floating-collapse');
+                if (btn) {
+                    btn.title = 'Expand panel';
+                    btn.setAttribute('aria-label', 'Expand panel');
+                }
+                requestAnimationFrame(() => requestAnimationFrame(() => stack.classList.remove('no-anim')));
+            }
         }
     } catch (e) {}
 
