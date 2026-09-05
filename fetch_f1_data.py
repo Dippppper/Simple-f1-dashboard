@@ -95,6 +95,13 @@ def norm_team(name):
     return TEAM_MAP.get(name, name)
 
 
+# FastF1's Location column occasionally carries wrong city data (the 2026
+# Bahrain GP is listed as "Kuala Lumpur"); correct known quirks by country.
+LOCATION_FIX = {
+    "Bahrain": "Sakhir",
+}
+
+
 # ── main data collection ─────────────────────────────────────────────
 
 def fetch_all(year: int | None = None) -> dict:
@@ -110,24 +117,37 @@ def fetch_all(year: int | None = None) -> dict:
     completed_events = []
     active_events = []
     upcoming_events = []
+    season_schedule = []  # full calendar with per-session UTC times
     for _, row in schedule.iterrows():
         rd = int(row["RoundNumber"])
         edate = row["EventDate"].to_pydatetime()
         if edate.tzinfo is None:
             edate = edate.replace(tzinfo=timezone.utc)
         sessions = collect_event_sessions(year, rd, row, edate)
+        location = LOCATION_FIX.get(row.get("Country", ""), row.get("Location", ""))
         ev = {
             "year": year,
             "round": str(rd),
             "eventName": row.get("EventName", ""),
             "officialName": row.get("OfficialEventName", row.get("EventName", "")),
             "country": row.get("Country", ""),
-            "location": row.get("Location", ""),
-            "circuit": row.get("Location", ""),  # FastF1 uses Location for circuit
+            "location": location,
+            "circuit": location,  # FastF1 uses Location for circuit
             "date": dt_to_date(edate),
             "format": normalize_format(row.get("EventFormat", "conventional")),
             "sessions": sessions,
         }
+        if rd > 0:  # round 0 is pre-season testing
+            season_schedule.append({
+                "round": ev["round"],
+                "eventName": ev["eventName"],
+                "country": ev["country"],
+                "location": ev["location"],
+                "circuit": ev["circuit"],
+                "date": ev["date"],
+                "format": ev["format"],
+                "sessions": sessions,
+            })
         weekend_start = edate - timedelta(days=3)
         if edate < now:
             # race finished
@@ -246,6 +266,8 @@ def fetch_all(year: int | None = None) -> dict:
         "lastUpdated": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "nextEvent": next_event_data,
         "wdcFeasibility": wdc_feasibility,
+        # Full season calendar with per-session UTC times (schedule popups)
+        "seasonSchedule": season_schedule,
         # Source labels when results are carried over from an earlier round
         # (null when the data belongs to the active event itself)
         "qualiSource": quali_source,

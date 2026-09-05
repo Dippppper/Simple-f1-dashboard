@@ -1300,32 +1300,31 @@
         .sched-item:last-child::before { bottom: calc(100% - 15px); }
         .sched-date { flex: 0 0 56px; text-align: right; font-size: 12px; color: var(--gray-4); padding-top: 8px; white-space: nowrap; }
         .sched-node { flex: 0 0 30px; display: flex; justify-content: center; position: relative; z-index: 1; }
-        .sched-node span {
+        .sched-node > span {
             width: 30px; height: 30px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
         }
-        .sched-body { flex: 1; min-width: 0; padding-top: 1px; }
-        .sched-name { font-size: 15px; font-weight: 600; color: var(--gray-1); line-height: 1.3; }
-        .sched-sub { font-size: 12px; color: var(--gray-4); margin-top: 2px; }
+        .sched-body { flex: 1; min-width: 0; padding-top: 4px; }
+        .sched-name { font-size: 16px; font-weight: 600; color: var(--gray-1); line-height: 1.3; }
         .sched-chip {
             display: inline-block; margin-left: 8px; padding: 1px 7px; border: 1px solid rgba(225,6,0,0.55);
             color: #E10600; font-size: 9px; font-weight: 600; letter-spacing: 1px; border-radius: 4px;
             vertical-align: 2px;
         }
-        .sched-item.done { opacity: 0.45; }
-        .sched-item.done .sched-node span { background: var(--gray-bar); color: var(--gray-4); }
+        /* Dim only the row content, not the hover popup inside it */
+        .sched-item.done .sched-date, .sched-item.done .sched-node > span, .sched-item.done .sched-name { opacity: 0.45; }
+        .sched-item.done .sched-node > span { background: var(--gray-bar); color: var(--gray-4); }
         .sched-item.done .sched-name { color: var(--gray-3); font-weight: 500; }
-        .sched-item.next .sched-node span {
+        .sched-item.next .sched-node > span {
             background: var(--accent-red); color: #fff;
             box-shadow: 0 0 0 4px rgba(225,6,0,0.18), 0 0 16px rgba(225,6,0,0.5);
         }
         .sched-item.next .sched-name { color: #fff; font-weight: 700; }
-        .sched-item.next .sched-sub { color: var(--gray-3); }
-        .sched-item.upcoming .sched-node span { background: var(--gray-6); color: var(--gray-1); }
+        .sched-item.upcoming .sched-node > span { background: var(--gray-6); color: var(--gray-1); }
         .sched-item.upcoming .sched-name { color: var(--gray-1); }
         .sched-item.upcoming:hover .sched-name { color: #fff; }
-        .sched-item.upcoming:hover .sched-node span { background: var(--gray-5); }
+        .sched-item.upcoming:hover .sched-node > span { background: var(--gray-5); }
         .sched-month { display: flex; align-items: center; padding: 14px 0 10px; position: relative; }
         .sched-month::before { content: ''; position: absolute; left: 85px; top: -14px; height: calc(100% + 28px); width: 2px; background: var(--gray-6); }
         .sched-month:first-child::before { top: 0; height: 100%; }
@@ -1334,6 +1333,65 @@
             color: var(--gray-5); text-transform: uppercase;
         }
         @media (max-width: 768px) { .sched-wrap { grid-template-columns: 1fr; } }
+
+        /* ===== Hover popup on round badge — frosted card, PREDICTION texture ===== */
+        .sched-node { position: relative; }
+        .sched-pop {
+            position: absolute; left: calc(100% + 12px); top: 50%;
+            width: 248px; z-index: 50;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            box-shadow: 0 10px 36px rgba(0,0,0,0.38);
+            overflow: hidden;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transform: translateY(-50%) scale(0.92);
+            transform-origin: left center;
+            transition: opacity 0.2s ease, transform 0.28s cubic-bezier(0.34, 1.4, 0.5, 1), visibility 0s linear 0.28s;
+        }
+        /* Right-column items open leftward so the card never leaves the section */
+        .sched-item.pop-left .sched-pop { left: auto; right: calc(100% + 12px); transform-origin: right center; }
+        .sched-node:hover .sched-pop {
+            opacity: 1; visibility: visible;
+            transform: translateY(-50%) scale(1);
+            transition: opacity 0.2s ease, transform 0.28s cubic-bezier(0.34, 1.4, 0.5, 1);
+        }
+        .sp-top {
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+            padding: 13px 16px 11px;
+            background: rgba(10,10,12,0.5);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+        }
+        .sp-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #d6d6dc; }
+        .sp-item svg { flex-shrink: 0; color: #e8e8ec; }
+        .sp-item.sp-loc { color: #b9b9c0; font-weight: 500; }
+        .sp-item.sp-loc svg { color: #9a9aa2; }
+        .sp-body {
+            padding: 11px 16px 12px;
+            background: rgba(44,44,50,0.34);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .sp-day {
+            font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.45); text-transform: uppercase;
+            margin: 8px 0 2px;
+        }
+        .sp-day:first-child { margin-top: 0; }
+        .sp-row { display: flex; align-items: baseline; justify-content: space-between; padding: 3px 0; }
+        .sp-row > span:first-child { font-size: 12px; font-weight: 600; color: #d6d6dc; letter-spacing: 0.5px; }
+        .sp-row > span:last-child { font-size: 12px; color: #9a9aa2; font-variant-numeric: tabular-nums; }
+        .sp-row.race > span:first-child { color: #ff4438; }
+        .sp-row.race > span:last-child { color: #ff9a92; font-weight: 600; }
+        @media (max-width: 768px) {
+            .sched-pop { width: 216px; }
+            .sched-item.pop-left .sched-pop { right: calc(100% + 10px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .sched-pop { transition: opacity 0.1s ease; transform: none; }
+            .sched-node:hover .sched-pop { transform: translateY(-50%); }
+        }
 
         /* Responsive */
         /* Intermediate breakpoint: when horizontal space gets tight (hero-left 420 + gap 30 + hero-stage 320 = 770, plus padding 80),
@@ -2168,6 +2226,32 @@ async function loadData() {
     // Fallback to embedded data
     if (!appData) appData = FALLBACK_DATA;
 
+    // Sync the embedded calendar with data.json's authoritative seasonSchedule
+    // (real round order / dates / formats — the embedded list was written
+    // before the final 2026 calendar). Curated circuit names are kept by
+    // matching normalized event names; rounds unknown to the embedded list
+    // (e.g. a late-added Bahrain round) fall back to FastF1 fields.
+    if (Array.isArray(appData.seasonSchedule) && appData.seasonSchedule.length) {
+        const normName = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const byName = {};
+        SEASON_2026.forEach(e => { byName[normName(e.eventName)] = e; });
+        const merged = appData.seasonSchedule.map(e => {
+            const old = byName[normName(e.eventName)] || {};
+            return {
+                round: e.round,
+                eventName: e.eventName,
+                officialName: old.officialName || '',
+                circuit: old.circuit || e.circuit,
+                location: e.location,
+                country: e.country,
+                date: e.date,
+                format: e.format,
+            };
+        });
+        SEASON_2026.length = 0;
+        SEASON_2026.push(...merged);
+    }
+
     // Auto-detect current event (using embedded season data, works offline)
     window._currentEvent = findCurrentEvent();
 
@@ -2960,7 +3044,66 @@ function schedNextRound() {
     if (Number(cur.round) === Number(last.round) && Date.now() > parseDate8(last.date).getTime() + 86400000) return null;
     return Number(cur.round);
 }
-function renderSchedCol(races, nextRound) {
+// Session list for a schedule popup. Real times come from data.json's
+// seasonSchedule (fetched from FastF1). When that's unavailable (file://
+// mode, or a round missing from it), fall back to a weekend derived from
+// the race date with placeholder times. All stamps render in UTC+8.
+function schedPopSessions(r) {
+    const cal = (appData && appData.seasonSchedule) || [];
+    const hit = cal.find(s => Number(s.round) === Number(r.round));
+    if (hit && hit.sessions && Object.keys(hit.sessions).length) {
+        const LABELS = { fp1: 'FP1', fp2: 'FP2', fp3: 'FP3', sq: 'SPRINT QUALI', sprint: 'SPRINT', qualifying: 'QUALIFYING', race: 'RACE' };
+        return Object.entries(hit.sessions)
+            .filter(([, s]) => s && s.date)
+            .map(([k, s]) => ({ label: LABELS[k] || k.toUpperCase(), iso: s.date, race: k === 'race' }))
+            .sort((a, b) => new Date(a.iso) - new Date(b.iso));
+    }
+    // Fallback: race = Sunday → FP1/FP2 on Friday, FP3/Quali on Saturday.
+    // Sprint weekends: Fri FP1 + Sprint Quali, Sat Sprint + Quali.
+    const race = parseDate8(r.date);
+    const pad = n => String(n).padStart(2, '0');
+    const dayKey = off => new Date(race.getTime() + off * 86400000)
+        .toLocaleString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai' });
+    const t = (off, h, m) => dayKey(off) + 'T' + pad(h) + ':' + pad(m) + ':00+08:00';
+    const rows = r.format === 'sprint_qualifying' ? [
+        ['FP1', t(-2, 13, 30)], ['SPRINT QUALI', t(-2, 17, 0)],
+        ['SPRINT', t(-1, 11, 0)], ['QUALIFYING', t(-1, 15, 0)],
+        ['RACE', t(0, 15, 0), 1]
+    ] : [
+        ['FP1', t(-2, 13, 30)], ['FP2', t(-2, 17, 0)],
+        ['FP3', t(-1, 12, 30)], ['QUALIFYING', t(-1, 16, 0)],
+        ['RACE', t(0, 15, 0), 1]
+    ];
+    return rows.map(([label, iso, isRace]) => ({ label, iso, race: !!isRace }));
+}
+
+function schedPopHtml(r) {
+    const sess = schedPopSessions(r);
+    const dayKey = s => new Date(s.iso)
+        .toLocaleString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai' });
+    // group sessions by Beijing calendar day
+    const groups = [];
+    let cur = null, curKey = '';
+    sess.forEach(s => {
+        const key = dayKey(s);
+        if (!cur || key !== curKey) { cur = { d: new Date(s.iso), rows: [] }; groups.push(cur); curKey = key; }
+        cur.rows.push(s);
+    });
+    const dayLabel = d => d.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Shanghai' }).toUpperCase();
+    let html = '<div class="sched-pop">'
+        + '<div class="sp-top">'
+        + '<span class="sp-item"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><rect x="1" y="1" width="5.4" height="5.4"/><rect x="7.6" y="7.6" width="5.4" height="5.4"/></svg>' + r.circuit + '</span>'
+        + '<span class="sp-item sp-loc"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.6-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>' + r.location + '</span>'
+        + '</div><div class="sp-body">';
+    groups.forEach(g => {
+        html += '<div class="sp-day">' + dayLabel(g.d) + '</div>';
+        g.rows.forEach(row => {
+            html += '<div class="sp-row' + (row.race ? ' race' : '') + '"><span>' + row.label + '</span><span>' + fmtTime8(row.iso) + '</span></div>';
+        });
+    });
+    return html + '</div></div>';
+}
+function renderSchedCol(races, nextRound, flip) {
     let html = '', lastMonth = null;
     races.forEach(r => {
         const m = schedMonthLabel(r.date);
@@ -2968,12 +3111,11 @@ function renderSchedCol(races, nextRound) {
         const rd = Number(r.round);
         const st = (nextRound === null || rd < nextRound) ? 'done' : (rd === nextRound ? 'next' : 'upcoming');
         const sprint = r.format === 'sprint_qualifying' ? '<span class="sched-chip">SPRINT</span>' : '';
-        html += `<div class="sched-item ${st}">
+        html += `<div class="sched-item ${st}${flip ? ' pop-left' : ''}">
             <div class="sched-date">${fmtDay8(r.date)}</div>
-            <div class="sched-node"><span>${r.round}</span></div>
+            <div class="sched-node"><span>${r.round}</span>${schedPopHtml(r)}</div>
             <div class="sched-body">
                 <div class="sched-name">${r.eventName}${sprint}</div>
-                <div class="sched-sub">${r.circuit} · ${r.location}</div>
             </div>
         </div>`;
     });
@@ -2986,8 +3128,8 @@ function renderSchedule() {
     const nextRound = schedNextRound();
     const list = SEASON_2026.filter(r => schedFilter === 'all' || r.format === 'sprint_qualifying');
     const half = Math.ceil(list.length / 2);
-    col1.innerHTML = renderSchedCol(list.slice(0, half), nextRound);
-    col2.innerHTML = renderSchedCol(list.slice(half), nextRound);
+    col1.innerHTML = renderSchedCol(list.slice(0, half), nextRound, false);
+    col2.innerHTML = renderSchedCol(list.slice(half), nextRound, true);
     const meta = document.getElementById('schedMeta');
     if (meta) meta.textContent = '2026 Season';
 }
