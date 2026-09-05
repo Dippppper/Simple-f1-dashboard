@@ -1131,7 +1131,6 @@
             backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: 24px 22px;
-            transition: opacity 0.2s ease, transform 0.2s ease;
         }
         .timeline {
             display: flex;
@@ -1429,7 +1428,6 @@
             align-items: flex-start;
             gap: 8px;
             width: 188px;
-            transition: width 0.2s ease;
         }
         /* When inside left-side-stack, timeline-float shouldn't be fixed */
         .left-side-stack .timeline-float {
@@ -1450,14 +1448,14 @@
             animation: cardFlow 8s linear infinite;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
             opacity: 0;
-            transform: translate(0, -10px);
+            transform: translateY(-10px);
             pointer-events: auto;
             position: relative;
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
         .floating-countdown.visible {
             opacity: 1;
-            transform: translate(0, 0);
+            transform: translateY(0);
         }
         .floating-refresh {
             width: 42px;
@@ -1514,18 +1512,10 @@
         /* When panel is collapsed, swap which button stack is visible. */
         .left-side-stack.collapsed .floating-actions { display: none; }
         .left-side-stack.collapsed .floating-actions-collapsed { display: flex; transform: translateY(80px); }
-        /* Collapsed state: slide panels off to the left edge + fade out,
-           and shrink the row width to the buttons' 42px so they hug the left edge. */
-        .left-side-stack.collapsed .floating-countdown {
-            opacity: 0;
-            transform: translate(-220px, 0);
-            pointer-events: none;
-        }
-        .left-side-stack.collapsed .timeline-float {
-            opacity: 0;
-            transform: translateX(-220px) !important;
-            pointer-events: none;
-        }
+        /* Collapsed state: hide panels instantly (no animation) and shrink
+           the row width to the buttons' 42px so they hug the left edge. */
+        .left-side-stack.collapsed .floating-countdown { display: none; }
+        .left-side-stack.collapsed .timeline-float { display: none; }
         .left-side-stack.collapsed { gap: 0; }
         .left-side-stack.collapsed .left-side-row { width: 42px; gap: 0; align-items: center; }
         .floating-cd-label {
@@ -1899,7 +1889,7 @@
 
 <!-- Footer -->
 <div class="footer" data-page-node-id="6zWkk4zPZyAa7OGDYWz6bv">
-    <p data-page-node-id="SgPXsyLfBoTMbdACeEOagp">F1 Season Dashboard · Data from FastF1 · <span id="footer-update" data-page-node-id="3rooN9kX2s6MorNqGLb5A5">Loading...</span></p>
+    <p data-page-node-id="SgPXsyLfBoTMbdACeEOagp">F1 Dashboard · Data from FastF1 · <span id="footer-update" data-page-node-id="3rooN9kX2s6MorNqGLb5A5">Loading...</span></p>
     <p style="margin-top:4px;" data-page-node-id="lEHhNP67RYzufMrkGEBoYs">Predictions are AI-generated estimates based on qualifying data, championship standings & historical track performance</p>
 </div>
 
@@ -2232,9 +2222,11 @@ function renderResults() {
     document.getElementById('resultMeta').textContent =
         (rsrc && rsrc.eventName) || (appData ? (appData.event.eventName || '') : '');
 
-    // Session tab highlight
+    // Session tab highlight — race/qualifying only. When currentSession is
+    // fp1/fp2/fp3 (mid-GP), the control should still default to Race.
     document.querySelectorAll('#sessionTabs .tab-btn').forEach(b => b.classList.remove('active'));
-    const activeBtn = document.querySelector('#sessionTabs [data-session="' + currentSession + '"]');
+    const tabSession = (currentSession === 'qualifying') ? 'qualifying' : 'race';
+    const activeBtn = document.querySelector('#sessionTabs [data-session="' + tabSession + '"]');
     if (activeBtn) activeBtn.classList.add('active');
 
     // Render header
@@ -2448,86 +2440,11 @@ function getLapMeta() {
     return ev ? (ev.eventName || ev.country || 'F1') : 'F1';
 }
 
-// POLE card availability:
-//   Show the card UNLESS we are inside a GP weekend AND qualifying has not finished.
-//     - inWeekend : now is within [event.weekendStart, event.weekendEnd]
-//     - qualDone  : now >= event.qualifyingEnd
-//   Unavailable state (X icon + text, no emoji) shows only when (inWeekend && !qualDone).
-function isPoleCardAvailable() {
-    const ev = appData && appData.event;
-    if (!ev) return true; // no event info -> fail open (show card)
-    const now = Date.now();
-    let inWeekend = false;
-    let qualDone = true;
-
-    if (ev.weekendStart && ev.weekendEnd) {
-        const ws = new Date(ev.weekendStart).getTime();
-        const we = new Date(ev.weekendEnd).getTime();
-        inWeekend = now >= ws && now <= we;
-    }
-    if (ev.qualifyingEnd) {
-        qualDone = now >= new Date(ev.qualifyingEnd).getTime();
-    } else if (ev.sessions && ev.sessions.qualifying && ev.sessions.qualifying.date) {
-        // fallback: qualifying considered done 2h after its scheduled start
-        qualDone = now >= (new Date(ev.sessions.qualifying.date).getTime() + 2 * 3600 * 1000);
-    }
-    return !(inWeekend && !qualDone);
-}
-
-// FASTEST LAP card availability:
-//   The race is the final session of a GP weekend, so the fastest lap is only known
-//   once the race is complete. Show the blank state UNLESS we are inside a GP weekend
-//   AND the race has not finished.
-//     - inWeekend : now is within [event.weekendStart, event.weekendEnd]
-//     - raceDone  : now >= event.weekendEnd (race ends the weekend)
-function isFastestLapAvailable() {
-    const ev = appData && appData.event;
-    if (!ev) return true; // no event info -> fail open (show card)
-    const now = Date.now();
-    let inWeekend = false;
-    let raceDone = true;
-
-    if (ev.weekendStart && ev.weekendEnd) {
-        const ws = new Date(ev.weekendStart).getTime();
-        const we = new Date(ev.weekendEnd).getTime();
-        inWeekend = now >= ws && now <= we;
-    }
-    if (ev.weekendEnd) {
-        // race is the last session of the weekend; weekendEnd marks its completion
-        raceDone = now >= new Date(ev.weekendEnd).getTime();
-    } else if (ev.sessions && ev.sessions.race && ev.sessions.race.date) {
-        raceDone = now >= (new Date(ev.sessions.race.date).getTime() + 2 * 3600 * 1000);
-    }
-    return !(inWeekend && !raceDone);
-}
-
-// Shared blank-state markup for the LAP TIME cards (X icon + text, no emoji)
-function ltUnavailableMarkup(text) {
-    return '<div class="lt-unavailable">' +
-        '<svg class="lt-x-icon" viewBox="0 0 24 24">' +
-            '<line x1="6" y1="6" x2="18" y2="18"></line>' +
-            '<line x1="18" y1="6" x2="6" y2="18"></line>' +
-        '</svg>' +
-        '<div class="lt-unavailable-text">' + text + '</div>' +
-    '</div>';
-}
-
 function renderLapTimeCard() {
-    // POLE card — available unless inside a GP weekend with qualifying not finished
-    if (!isPoleCardAvailable()) {
-        document.getElementById('lapPole').innerHTML =
-            ltUnavailableMarkup('Unavailable until qualifying is complete');
-    } else {
-        renderPoleLapCard();
-    }
-
-    // FASTEST LAP card — available unless inside a GP weekend with the race not finished
-    if (!isFastestLapAvailable()) {
-        document.getElementById('lapFastest').innerHTML =
-            ltUnavailableMarkup('Unavailable until RACE is complete');
-    } else {
-        renderFastestLapCard();
-    }
+    // LAP TIME cards always show data (carried over from the last completed
+    // round when the current weekend hasn't finished yet).
+    renderPoleLapCard();
+    renderFastestLapCard();
 
     document.getElementById('lapTimeMeta').textContent = getLapMeta('Qualifying');
 }
@@ -2623,7 +2540,8 @@ function renderFastestLapCard() {
     const fastest = (appData && appData.fastestLap && appData.fastestLap.driver) ? appData.fastestLap : LAP_SAMPLE.fastest;
     // Guard: incomplete sector data (e.g. race just finished and FastF1 hasn't populated sectors yet)
     if (!fastest.sectors || fastest.sectors.s1 === undefined) {
-        document.getElementById('lapFastest').innerHTML = ltUnavailableMarkup('Fastest lap data unavailable');
+        document.getElementById('lapFastest').innerHTML =
+            '<div class="lt-unavailable"><div class="lt-unavailable-text">Fastest lap data unavailable</div></div>';
         return;
     }
     const tc = getTeamColor(fastest.team);
@@ -2717,7 +2635,7 @@ function renderAll() {
 
 function updateAllMeta() {
     const nextEv = window._currentEvent;
-    const nextName = nextEv ? nextEv.eventName + ' · AI Prediction' : ((appData && appData.event && appData.event.eventName) || '') + ' · AI Prediction';
+    const nextName = nextEv ? nextEv.eventName : ((appData && appData.event && appData.event.eventName) || '');
 
     // Results meta — label with the event the shown results belong to
     const rsrc = appData ? ((currentSession === 'qualifying' ? appData.qualiSource : appData.raceSource) || null) : null;
@@ -2725,19 +2643,18 @@ function updateAllMeta() {
     const rm = document.getElementById('resultMeta');
     if (rm) rm.textContent = evt;
 
-    // Standings / WDC metas — reference the last completed round (race source)
+    // Standings / WDC metas — label with the last completed event (race source)
     const rs = appData ? (appData.raceSource || null) : null;
-    const rnd = 'After Round ' + ((rs && rs.round) || (appData ? appData.event.round : '11'));
     const sEvt = (rs && rs.eventName) || (appData ? (appData.event.eventName || '') : '');
     document.querySelectorAll('#tab-drivers .meta-bottom, #tab-constructors .meta-bottom').forEach(m => {
-        m.textContent = rnd + ' · ' + sEvt;
+        m.textContent = 'After ' + sEvt;
     });
     // Race prediction meta
     const rpm = document.querySelector('#tab-race .meta-bottom');
     if (rpm) rpm.textContent = nextName;
     // WDC meta
     const wm = document.getElementById('wdcMeta');
-    if (wm) wm.textContent = sEvt + ' · ' + rnd;
+    if (wm) wm.textContent = 'After ' + sEvt;
 }
 
 // ====== HERO + TIMELINE ======
